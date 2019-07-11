@@ -5,24 +5,29 @@ using namespace std;
 #ifndef STUDENT
 #define STUDENT
 
+#define MAX_ONE_STUDENT_SUB_NUM 50
+
 class Student {
 public:
-	int id, subject_num;
+	int id, sub_num;
 	string name;
-	int subject_ids[50], scores[50];
+	int sub_ids[MAX_ONE_STUDENT_SUB_NUM], scores[MAX_ONE_STUDENT_SUB_NUM];
 	
-	Student(int _id, string _name)
+	Student() { sub_num = 0; }
+	
+	void setData(int _id, string _name)
 	{
 		id = _id;
 		name = _name;
-		subject_num = 0;
 	}
 	
-	addScore(int subject_id, int score)
+	bool addScore(int sub_id, int score)
 	{
-		subject_ids[subject_num] = subject_id;
-		scores[subject_num] = score;
-		++subject_num;
+		if( sub_num == MAX_ONE_STUDENT_SUB_NUM ) return false;
+		sub_ids[sub_num] = sub_id;
+		scores[sub_num] = score;
+		++sub_num;
+		return true;
 	}
 };
 
