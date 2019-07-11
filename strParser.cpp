@@ -8,14 +8,43 @@ class StrParser {
 public:
 	static int parse(string &s)
 	{
+		int i = 0;
+		while( s[i] == ' ' ) i++;
+		s = s.substr(i);
+		
 		if( s == "v" || s == "V" ) return 0;
 		if( s == "help" ) return 1;
 		
-		string word = self::getWord(s);
+		string word = StrParser::getWord(s);
 		
 		if( word == "add" )
 		{
-			return self::parseAdd(s);
+			return StrParser::parseAdd(s);
+		} else if( word == "search" ) {
+			return StrParser::parseSearch(s);
+		} else {
+			return -1;
+		}
+	}
+	
+	static int parseSearch(string &s)
+	{
+		string word = StrParser::getWord(s);
+		if( word == "student" )
+		{
+			word = StrParser::getWord(s);
+			if( word == "score" )
+			{
+				word = StrParser::getWord(s);
+				if( word == "where" )
+				{
+					return 111;
+				} else {
+					return -1;
+				}
+			} else {
+				return -1;
+			}
 		} else {
 			return -1;
 		}
@@ -48,7 +77,8 @@ public:
 			i++;
 		}
 		i++;
-		s = s.substr(i);
+		if( i < s.length() ) s = s.substr(i);
+		else s = "";
 		
 		return word;
 	}

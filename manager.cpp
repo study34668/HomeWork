@@ -87,6 +87,18 @@ public:
 		return OK;
 	}
 	
+	status findSubjectByName(string name, Subject* &sub)
+	{
+		if( sub_name_bst.Find(name, sub) ) return OK;
+		return ER_NOT_EXIST;
+	}
+	
+	status findStudentByName(string name, Student* &stu)
+	{
+		if( stu_name_bst.Find(name, stu) ) return OK;
+		return ER_NOT_EXIST;
+	}
+	
 	Student* getStudent(int stu_id)
 	{
 		Student* stu = NULL;

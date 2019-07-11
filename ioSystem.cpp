@@ -20,7 +20,7 @@ public:
 		cout << s << "成功" << endl << endl;
 	}
 	
-	static void printError(string &s)
+	static void printError(string s)
 	{
 		cout << s << endl << endl;
 	}
@@ -77,8 +77,13 @@ public:
 	static void printHelp()
 	{
 		cout << setiosflags(ios::left);
-		cout << setw(20) << "v" << "查看版本" << endl;
-		cout << setw(20) << "help" << "查看操作语句" << endl;
+		cout << setw(80) << "v" << "查看版本" << endl;
+		cout << setw(80) << "help" << "查看操作语句" << endl;
+		cout << setw(80) << "add student [学号] [姓名]" << "添加学生" << endl;
+		cout << setw(80) << "add subject [课程号] [名称] [学分]" << "添加科目" << endl;
+		cout << setw(80) << "add score [学号|学生姓名] [课程号|课程名称] [分数]" << "添加学生分数" << endl;
+		cout << setw(80) << "search student score where [学号|学生姓名|all] [课程号|课程名称|all]" << "查看分数" << endl;
+		
 		cout << endl; 
 	}
 	
