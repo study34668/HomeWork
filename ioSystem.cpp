@@ -5,8 +5,26 @@
 #include <iomanip>
 using namespace std;
 
+#ifndef IOSYSTEM
+#define IOSYSTEM
+
 class IoSystem {
 public:
+	static void printWrong()
+	{
+		cout << "您的语句有误，请输入 help 获取帮助" << endl << endl;
+	}
+	
+	static void printSuccess(string &s)
+	{
+		cout << s << "成功" << endl << endl;
+	}
+	
+	static void printError(string &s)
+	{
+		cout << s << endl << endl;
+	}
+	
 	static void printV()
 	{
 		cout << "Student Score System v1.0.0" << endl << endl;
@@ -53,11 +71,15 @@ public:
 			}
 			cout << endl;
 		}
+		cout << endl;
 	}
 	
 	static void printHelp()
 	{
-		
+		cout << setiosflags(ios::left);
+		cout << setw(20) << "v" << "查看版本" << endl;
+		cout << setw(20) << "help" << "查看操作语句" << endl;
+		cout << endl; 
 	}
 	
 	static void printScore(Student* stu, BSTree<Subject*, int>* &subs)
@@ -86,3 +108,5 @@ private:
 		if( p->rc != NULL ) ergodic_print_score(p->rc, subs);
 	}
 };
+
+#endif

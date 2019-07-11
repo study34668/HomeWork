@@ -5,6 +5,9 @@
 #include <iostream>
 using namespace std;
 
+#ifndef MANAGER
+#define MANAGER
+
 #define OK 0
 #define ER_MEM_EXCEED 1
 #define ER_NOT_EXIST 2
@@ -96,3 +99,5 @@ public:
 		return &sub_id_bst;
 	}
 };
+
+#endif
