@@ -1,23 +1,35 @@
-#include "manager.cpp"
-#include "ioSystem.cpp"
+#include "kernel.cpp"
+#include <string>
 using namespace std;
 
 int main()
 {	
-	Manager manager;
-	
-	manager.addSubject("C++", 4);
-	manager.addSubject("DataStruct", 4);
+//	Manager manager;
+//	
+//	manager.addSubject("C++", 4);
+//	manager.addSubject("DataStruct", 4);
+//
+//	manager.addStudent("NB");
+//
+//	manager.addStudentScore(1, 1, 100);
+//	manager.addStudentScore(1, 2, 99);
+//	
+//	Student stu = manager.getStudent(1);
+//	Subject* subs = manager.getSubjects();
+//	
+//	IoSystem::printScore(stu, subs);
 
-	manager.addStudent("NB");
-
-	manager.addStudentScore(1, 1, 100);
-	manager.addStudentScore(1, 2, 99);
+	Kernel kernel;
+	string s;
 	
-	Student stu = manager.getStudent(1);
-	Subject* subs = manager.getSubjects();
+	cout << "Welcome to Student Score System v1.0.0" << endl << endl;
 	
-	IoSystem::printScore(stu, subs);
+	while(1)
+	{
+		cout << "-> "; 
+		getline(cin, s);
+		kernel.handle(s);
+	}
 
 	return 0;
 }
