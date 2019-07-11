@@ -60,16 +60,29 @@ public:
 		
 	}
 	
-	static void printScore(const Student &stu, Subject* subs)
+	static void printScore(Student* stu, BSTree<Subject*, int>* &subs)
 	{
 		cout << setiosflags(ios::left);
-		cout << "姓名：" << stu.name << " 学号：" << stu.id << endl;
+		cout << "姓名：" << stu->name << " 学号：" << stu->id << endl;
 		cout << setw(20) << "课程号" << setw(20) << "课程名称" << setw(20) << "学分" << setw(20) << "成绩" << endl;
-		for(int i=0; i<stu.sub_num; i++)
+		
+		BSTNode<int, int>* root = stu->score_id_bst.getRoot();
+		
+		ergodic_print_score(root, subs);
+	}
+	
+private:
+	static void ergodic_print_score(BSTNode<int, int>* &p, BSTree<Subject*, int>* &subs)
+	{
+		if( p == NULL ) return;
+		if( p->lc != NULL ) ergodic_print_score(p->lc, subs);
+		int sub_id = p->key;
+		Subject* sub = NULL;
+		if( subs->Find(sub_id, sub) )
 		{
-			int sub_id = stu.sub_ids[i];
-			cout << setw(20) << subs[sub_id].id << setw(20) << subs[sub_id].name 
-				<< setw(20) << subs[sub_id].credit << setw(20) << stu.scores[i] << endl; 
+			cout << setw(20) << sub->id << setw(20) << sub->name 
+				<< setw(20) << sub->credit << setw(20) << p->data << endl;
 		}
+		if( p->rc != NULL ) ergodic_print_score(p->rc, subs);
 	}
 };

@@ -1,101 +1,98 @@
 #include "subject.cpp"
 #include "student.cpp"
+#include "BSTree.cpp"
 #include <string>
 #include <iostream>
-#include <iomanip>
 using namespace std;
 
-#define START_STUDENT_NUM 100
-#define START_SUBJECT_NUM 30
-
-#define OK true
+#define OK 0
 #define ER_MEM_EXCEED 1
+#define ER_NOT_EXIST 2
+#define ER_ALREADY_EXIST 3
 
 typedef int status;
 
 class Manager {
 private:
-	Student* stus;
-	Subject* subs;
+	BSTree<Student*, int> stu_id_bst;
+	BSTree<Student*, string> stu_name_bst;
+	BSTree<Subject*, int> sub_id_bst;
+	BSTree<Subject*, string> sub_name_bst;
 	int stu_num, sub_num;
-	int stu_max_num, sub_max_num;
 	
-public:	
+public:
+	static void stu_id_delete(int tmp, Student* stu)
+	{
+		delete stu;
+	}
+	
+	static void sub_id_delete(int tmp, Subject* sub)
+	{
+		delete sub;
+	}
+	
 	Manager()
 	{
 		stu_num = 0; sub_num = 0;
-		stu_max_num = START_STUDENT_NUM;
-		sub_max_num = START_SUBJECT_NUM;
-		stus = new Student[stu_max_num];
-		subs = new Subject[sub_max_num];
+		stu_id_bst.init();
+		sub_id_bst.init();
+		stu_name_bst.init();
+		sub_name_bst.init();
 	}
 	
 	~Manager()
 	{
-		delete [] stus;
-		delete [] subs;
+		sub_id_bst.ergodic(Manager::sub_id_delete);
+		stu_id_bst.ergodic(Manager::stu_id_delete);
+		
+		stu_id_bst.Destroy();
+		sub_id_bst.Destroy();
+		stu_name_bst.Destroy();
+		sub_name_bst.Destroy();
 	}
 	
-	status addSubject(string name, int credit)
+	status addSubject(int id, string name, int credit)
 	{
-		if( sub_num == sub_max_num )
-		{
-			Subject* old_subs = subs;
-			subs = new Subject[sub_max_num*2];
-			if( subs == NULL )
-			{
-				subs = old_subs;
-				return ER_MEM_EXCEED;
-			}
-			for(int i=1; i<=sub_max_num; i++)
-			{
-				subs[i] = old_subs[i];
-			}
-			delete [] old_subs;
-			sub_max_num *= 2;
-		}
-		++sub_num;
-		subs[sub_num].setData(sub_num, credit, name);
+		Subject* newSubject;
+		if( sub_id_bst.Find(id, newSubject) ) return ER_ALREADY_EXIST;
+		if( sub_name_bst.Find(name, newSubject) ) return ER_ALREADY_EXIST;
+		newSubject = new Subject(id, credit, name);
+		sub_id_bst.Insert(id, newSubject);
+		sub_name_bst.Insert(name, newSubject);
+		sub_num++;
 		return OK;
 	}
 	
-	status addStudent(string name)
+	status addStudent(int id, string name)
 	{
-		if( stu_num == stu_max_num )
-		{
-			Student* old_stus = stus;
-			stus = new Student[stu_max_num*2];
-			if( stus == NULL )
-			{
-				stus = old_stus;
-				return ER_MEM_EXCEED;
-			}
-			for(int i=1; i<=stu_max_num; i++)
-			{
-				stus[i] = old_stus[i];
-			}
-			delete [] old_stus;
-			stu_max_num *= 2;
-		}
-		++stu_num;
-		stus[stu_num].setData(stu_num, name);
+		Student* newStudent;
+		if( stu_id_bst.Find(id, newStudent) ) return ER_ALREADY_EXIST;
+		if( stu_name_bst.Find(name, newStudent) ) return ER_ALREADY_EXIST;
+		newStudent = new Student(id, name);
+		stu_id_bst.Insert(id, newStudent);
+		stu_name_bst.Insert(name, newStudent);
+		stu_num++;
 		return OK;
 	}
 	
 	status addStudentScore(int stu_id, int sub_id, int score)
 	{
-		int tmp = stus[stu_id].addScore(sub_id, score);
-		if( tmp ) return OK;
-		else return ER_MEM_EXCEED;
+		Student* stu = NULL;
+		stu_id_bst.Find(stu_id, stu);
+		if( stu == NULL ) return ER_NOT_EXIST;
+		stu->addScore(sub_id, score);
+		return OK;
 	}
 	
-	Student& getStudent(int stu_id)
+	Student* getStudent(int stu_id)
 	{
-		return stus[stu_id];
+		Student* stu = NULL;
+		stu_id_bst.Find(stu_id, stu);
+		return stu;
 	}
 	
-	Subject* getSubjects()
+	BSTree<Subject*, int>* getSubjects()
 	{
-		return subs;
+		return &sub_id_bst;
 	}
 };

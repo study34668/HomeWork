@@ -1,19 +1,30 @@
 #include "subject.cpp"
+#include "BSTree.cpp"
 #include <string>
 using namespace std;
 
 #ifndef STUDENT
 #define STUDENT
 
-#define MAX_ONE_STUDENT_SUB_NUM 50
-
 class Student {
 public:
 	int id, sub_num;
 	string name;
-	int sub_ids[MAX_ONE_STUDENT_SUB_NUM], scores[MAX_ONE_STUDENT_SUB_NUM];
+	BSTree<int, int> score_id_bst;
 	
-	Student() { sub_num = 0; }
+	Student()
+	{
+		score_id_bst.init();
+		sub_num = 0;
+	}
+	
+	Student(int _id, string _name)
+	{
+		id = _id;
+		name = _name;
+		sub_num = 0;
+		score_id_bst.init();
+	}
 	
 	void setData(int _id, string _name)
 	{
@@ -23,10 +34,9 @@ public:
 	
 	bool addScore(int sub_id, int score)
 	{
-		if( sub_num == MAX_ONE_STUDENT_SUB_NUM ) return false;
-		sub_ids[sub_num] = sub_id;
-		scores[sub_num] = score;
-		++sub_num;
+		int tmp;
+		if( score_id_bst.Find(sub_id, tmp) ) return false;
+		score_id_bst.Insert(sub_id, score);
 		return true;
 	}
 };
