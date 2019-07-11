@@ -89,17 +89,13 @@ public:
 		else return ER_MEM_EXCEED;
 	}
 	
-	void printScore(int stu_id)
+	Student& getStudent(int stu_id)
 	{
-		Student stu = stus[stu_id];
-		cout << setiosflags(ios::left);
-		cout << "姓名：" << stu.name << " 学号：" << stu.id << endl;
-		cout << setw(20) << "课程号" << setw(20) << "课程名称" << setw(20) << "学分" << setw(20) << "成绩" << endl;
-		for(int i=0; i<stu.sub_num; i++)
-		{
-			int sub_id = stu.sub_ids[i];
-			cout << setw(20) << subs[sub_id].id << setw(20) << subs[sub_id].name 
-				<< setw(20) << subs[sub_id].credit << setw(20) << stu.scores[i] << endl; 
-		}
+		return stus[stu_id];
+	}
+	
+	Subject* getSubjects()
+	{
+		return subs;
 	}
 };
