@@ -18,6 +18,8 @@ public:
 	{
 		score_id_bst.init();
 		sub_num = 0;
+		total_credit = 0;
+		weighted_score = 0.0;
 	}
 	
 	Student(int _id, string _name)
@@ -26,6 +28,8 @@ public:
 		name = _name;
 		sub_num = 0;
 		score_id_bst.init();
+		total_credit = 0;
+		weighted_score = 0.0;
 	}
 	
 	void setData(int _id, string _name)

@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <iomanip>
+#include <map>
 using namespace std;
 
 #ifndef IOSYSTEM
@@ -84,6 +85,8 @@ public:
 		cout << setw(80) << "add subject [课程号] [名称] [学分]" << "添加科目" << endl << endl;
 		cout << setw(80) << "add score [学号|学生姓名] [课程号|课程名称] [分数]" << "添加学生分数" << endl << endl;
 		cout << setw(80) << "search student score [学号|学生姓名|all] [课程号|课程名称|all]" << "查看分数" << endl << endl;
+		cout << setw(80) << "search student weight [学号|学生姓名|all]" << "查看加权" << endl << endl;
+		cout << setw(80) << "search student range" << "查看排名" << endl << endl;
 		
 		cout << endl; 
 	}
@@ -109,6 +112,21 @@ public:
 		printStuScoreTitle(stu);
 		cout << setw(20) << sub->id << setw(20) << sub->name 
 			<< setw(20) << sub->credit << setw(20) << score << endl;
+		cout << endl;
+	}
+	
+	static void printWeightedScore(multimap<double, Student*> &m)
+	{
+		cout << setiosflags(ios::left);
+		cout << setw(20) << "排名" << setw(20) << "姓名" << setw(20) << "学号" << setw(20) << "加权成绩" << endl;
+		int cont = 0;
+		multimap<double, Student*>::iterator i;
+		for(i=m.end(); i!=m.begin(); i++)
+		{
+			++cont;
+			cout << setw(20) << cont << setw(20) << i->second->name
+				<< setw(20) << i->second->id << setw(20) << i->first << endl;
+		}
 		cout << endl;
 	}
 	

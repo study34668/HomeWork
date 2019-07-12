@@ -3,6 +3,7 @@
 #include "strParser.cpp"
 #include "functions.cpp"
 #include <string>
+#include <map>
 using namespace std;
 
 #ifndef KERNEL
@@ -29,6 +30,7 @@ public:
 			case 1: handleHelp(); break;
 			case 111: handleSearchStudentScore(s); break;
 			case 112: handleSearchStuWeightedScore(s); break;
+			case 113: handleSearchStuRange(); break;
 			case 21: handleAddSubject(s); break;
 			case 22: handleAddStudent(s); break;
 			case 23: handleAddScore(s); break;
@@ -199,7 +201,7 @@ public:
 		if( p->rc != NULL ) ergodic_handle_searchAll(p->rc, subs);
 	}
 	
-	void handleSearchStuWeightedScore(stirng s)
+	void handleSearchStuWeightedScore(string &s)
 	{
 		string tmp1 = StrParser::getWord(s);
 		
@@ -211,7 +213,7 @@ public:
 		
 		if( tmp1 == "all" )
 		{
-			handleWrong()
+			handleSearchStuRange();
 			return;
 		}
 		
@@ -225,6 +227,26 @@ public:
 		
 		IoSystem::printOneWeightedScore(stu);
 		return;
+	}
+	
+	void handleSearchStuRange()
+	{
+		BSTree<Student*, int>* stus = manager.getStudents();
+		BSTNode<Student*, int>* root = stus->getRoot();
+		multimap<double, Student*> map;
+		map.clear();
+		ergodic_map_push(root, map);
+		IoSystem::printWeightedScore(map);
+		return;
+	}
+	
+	void ergodic_map_push(BSTNode<Student*, int>* &p, multimap<double, Student*> &m)
+	{
+		if( p == NULL ) return;
+		if( p->lc != NULL ) ergodic_map_push(p->lc, m);
+		Student* stu = p->data;
+		m.insert(pair<double, Student*>(stu->weighted_score, stu));
+		if( p->rc != NULL ) ergodic_map_push(p->rc, m);
 	}
 	
 	void handleAddSubject(string s)

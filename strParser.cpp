@@ -36,9 +36,12 @@ public:
 			if( word == "score" )
 			{
 				return 111;
-			} else if( word == "weighted_score" )
+			} else if( word == "weight" )
 			{
 				return 112;
+			} else if( word == "range" )
+			{
+				return 113;
 			} else {
 				return -1;
 			}
