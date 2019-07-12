@@ -11,6 +11,8 @@ public:
 	int id, sub_num;
 	string name;
 	BSTree<int, int> score_id_bst;
+	int total_credit;
+	double weighted_score;
 	
 	Student()
 	{
@@ -32,12 +34,21 @@ public:
 		name = _name;
 	}
 	
-	bool addScore(int sub_id, int score)
+	bool addScore(int sub_id, int score, int credit)
 	{
 		int tmp;
 		if( score_id_bst.Find(sub_id, tmp) ) return false;
 		score_id_bst.Insert(sub_id, score);
+		weighted_score = (weighted_score*total_credit + score*credit) / (total_credit+credit);
+		total_credit += credit;
 		return true;
+	}
+	
+	int getScore(int sub_id)
+	{
+		int tmp;
+		if( score_id_bst.Find(sub_id, tmp) ) return tmp;
+		else return -1;
 	}
 };
 

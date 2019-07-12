@@ -35,13 +35,10 @@ public:
 			word = StrParser::getWord(s);
 			if( word == "score" )
 			{
-				word = StrParser::getWord(s);
-				if( word == "where" )
-				{
-					return 111;
-				} else {
-					return -1;
-				}
+				return 111;
+			} else if( word == "weighted_score" )
+			{
+				return 112;
 			} else {
 				return -1;
 			}

@@ -28,6 +28,7 @@ public:
 			case 0: handleV(); break;
 			case 1: handleHelp(); break;
 			case 111: handleSearchStudentScore(s); break;
+			case 112: handleSearchStuWeightedScore(s); break;
 			case 21: handleAddSubject(s); break;
 			case 22: handleAddStudent(s); break;
 			case 23: handleAddScore(s); break;
@@ -93,6 +94,12 @@ public:
 		}
 	}
 	
+	Student* getStu(int stu_id)
+	{
+		if( stu_id <= 0 ) return NULL;
+		return manager.getStudent(stu_id);
+	}
+	
 	int getSub_id(string &s)
 	{
 		int sub_id = toNumber(s);
@@ -110,6 +117,12 @@ public:
 		}
 	}
 	
+	Subject* getSub(int sub_id)
+	{
+		if( sub_id <= 0 ) return NULL;
+		return manager.getSubject(sub_id);
+	}
+	
 	void handleSearchStudentScore(string s)
 	{
 		string tmp1 = StrParser::getWord(s);
@@ -123,13 +136,30 @@ public:
 		
 		if( tmp1 == "all" )
 		{
-			handleWrong();
-			return;
+			if( tmp2 == "all" )
+			{
+				BSTree<Subject*, int>* subs = manager.getSubjects();
+				BSTNode<Student*, int>* root = manager.getStudents()->getRoot();
+				ergodic_handle_searchAll(root, subs);
+				return;
+			} else {
+				int sub_id = getSub_id(tmp2);
+				Subject* sub = getSub(sub_id);
+				if( sub == NULL )
+				{
+					handleError(ER_NOT_EXIST, "科目");
+					return;
+				}
+				
+				BSTree<Student*, int>* stus = manager.getStudents();
+				IoSystem::printSubjectScore(sub, stus);
+				return;
+			}
 		}
 		
 		int stu_id = getStu_id(tmp1);
-		
-		if( stu_id == 0 )
+		Student* stu = getStu(stu_id);
+		if( stu == NULL )
 		{
 			handleError(ER_NOT_EXIST, "学生");
 			return;
@@ -137,24 +167,64 @@ public:
 		
 		if( tmp2 == "all" )
 		{
-			Student* stu = manager.getStudent(stu_id);
 			BSTree<Subject*, int>* subs = manager.getSubjects();
-			
 			IoSystem::printScore(stu, subs);
-			
 			return;
 		} else {
 			int sub_id = getSub_id(tmp2);
-			if( sub_id == 0 )
+			Subject* sub = getSub(sub_id);
+			if( sub == NULL )
 			{
 				handleError(ER_NOT_EXIST, "科目");
 				return;
 			}
-			
+			int score = stu->getScore(sub_id);
+			if( score == -1 )
+			{
+				handleError(ER_NOT_EXIST, "学生此科目成绩");
+				return;
+			}
+			IoSystem::printOneScore(stu, sub, score);
+			return;
+		}
+		
+	}
+	
+	void ergodic_handle_searchAll(BSTNode<Student*, int>* &p, BSTree<Subject*, int>* &subs)
+	{
+		if( p == NULL ) return;
+		if( p->lc != NULL ) ergodic_handle_searchAll(p->lc, subs);
+		Student* stu = p->data;
+		IoSystem::printScore(stu, subs);
+		if( p->rc != NULL ) ergodic_handle_searchAll(p->rc, subs);
+	}
+	
+	void handleSearchStuWeightedScore(stirng s)
+	{
+		string tmp1 = StrParser::getWord(s);
+		
+		if( tmp1 == "" )
+		{
 			handleWrong();
 			return;
 		}
 		
+		if( tmp1 == "all" )
+		{
+			handleWrong()
+			return;
+		}
+		
+		int stu_id = getStu_id(tmp1);
+		Student* stu = getStu(stu_id);
+		if( stu == NULL )
+		{
+			handleError(ER_NOT_EXIST, "学生");
+			return;
+		}
+		
+		IoSystem::printOneWeightedScore(stu);
+		return;
 	}
 	
 	void handleAddSubject(string s)

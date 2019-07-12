@@ -83,7 +83,10 @@ public:
 		Student* stu = NULL;
 		stu_id_bst.Find(stu_id, stu);
 		if( stu == NULL ) return ER_NOT_EXIST;
-		stu->addScore(sub_id, score);
+		Subject* sub = NULL;
+		sub_id_bst.Find(sub_id, sub);
+		if( sub == NULL ) return ER_NOT_EXIST;
+		stu->addScore(sub_id, score, sub->credit);
 		return OK;
 	}
 	
@@ -106,9 +109,21 @@ public:
 		return stu;
 	}
 	
+	Subject* getSubject(int sub_id)
+	{
+		Subject* sub = NULL;
+		sub_id_bst.Find(sub_id, sub);
+		return sub;
+	}
+	
 	BSTree<Subject*, int>* getSubjects()
 	{
 		return &sub_id_bst;
+	}
+	
+	BSTree<Student*, int>* getStudents()
+	{
+		return &stu_id_bst;
 	}
 };
 
