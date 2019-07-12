@@ -121,8 +121,8 @@ public:
 		cout << setiosflags(ios::left);
 		cout << setw(20) << "排名" << setw(20) << "姓名" << setw(20) << "学号" << setw(20) << "加权成绩" << endl;
 		int cont = 0;
-		multimap<double, Student*>::iterator i;
-		for(i=m.end(); i!=m.begin(); i++)
+		multimap<double, Student*>::reverse_iterator i;
+		for(i=m.rbegin(); i!=m.rend(); i++)
 		{
 			++cont;
 			cout << setw(20) << cont << setw(20) << i->second->name

@@ -23,6 +23,7 @@ public:
 	Kernel()
 	{
 		FileSystem::loadSubjects(manager);
+		FileSystem::loadStudents(manager);
 	}
 	
 	void handle(string s)
@@ -90,6 +91,8 @@ public:
 	{
 		BSTree<Subject*, int>* subs = manager.getSubjects();
 		FileSystem::saveSubjects(subs);
+		BSTree<Student*, int>* stus = manager.getStudents();
+		FileSystem::saveStudents(stus);
 		IoSystem::printSuccess("±£´æ");
 		return;
 	}

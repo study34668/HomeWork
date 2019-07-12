@@ -8,7 +8,7 @@ using namespace std;
 
 class Student {
 public:
-	int id, sub_num;
+	int id;
 	string name;
 	BSTree<int, int> score_id_bst;
 	int total_credit;
@@ -17,7 +17,6 @@ public:
 	Student()
 	{
 		score_id_bst.init();
-		sub_num = 0;
 		total_credit = 0;
 		weighted_score = 0.0;
 	}
@@ -26,7 +25,6 @@ public:
 	{
 		id = _id;
 		name = _name;
-		sub_num = 0;
 		score_id_bst.init();
 		total_credit = 0;
 		weighted_score = 0.0;
