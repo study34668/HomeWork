@@ -16,7 +16,7 @@ public:
 		cout << "您的语句有误，请输入 help 获取帮助" << endl << endl;
 	}
 	
-	static void printSuccess(string &s)
+	static void printSuccess(string s)
 	{
 		cout << s << "成功" << endl << endl;
 	}
@@ -81,6 +81,7 @@ public:
 		cout << "带[]的代表是可以修改的参数，|代表或者" << endl << endl;
 		cout << setw(80) << "v" << "查看版本" << endl << endl;
 		cout << setw(80) << "help" << "查看操作语句" << endl << endl;
+		cout << setw(80) << "save" << "保存数据" << endl << endl;
 		cout << setw(80) << "add student [学号] [姓名]" << "添加学生" << endl << endl;
 		cout << setw(80) << "add subject [课程号] [名称] [学分]" << "添加科目" << endl << endl;
 		cout << setw(80) << "add score [学号|学生姓名] [课程号|课程名称] [分数]" << "添加学生分数" << endl << endl;

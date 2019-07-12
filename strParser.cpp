@@ -22,6 +22,9 @@ public:
 			return StrParser::parseAdd(s);
 		} else if( word == "search" ) {
 			return StrParser::parseSearch(s);
+		} else if( word == "save" )
+		{
+			return 2;
 		} else {
 			return -1;
 		}
@@ -69,9 +72,14 @@ public:
 	
 	static string getWord(string &s)
 	{
+		return getWord(s, ' ');
+	}
+	
+	static string getWord(string &s, char c)
+	{
 		int i = 0;
 		string word = "";
-		while( i < s.length() && s[i] != ' ' )
+		while( i < s.length() && s[i] != c )
 		{
 			word = word+s[i];
 			i++;

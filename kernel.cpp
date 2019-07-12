@@ -1,6 +1,7 @@
 #include "manager.cpp"
 #include "ioSystem.cpp"
 #include "strParser.cpp"
+#include "fileSystem.cpp"
 #include "functions.cpp"
 #include <string>
 #include <map>
@@ -19,6 +20,11 @@ private:
 	Manager manager;
 	
 public:
+	Kernel()
+	{
+		FileSystem::loadSubjects(manager);
+	}
+	
 	void handle(string s)
 	{
 		int code = StrParser::parse(s);
@@ -28,6 +34,7 @@ public:
 			case -1: handleWrong(); break;
 			case 0: handleV(); break;
 			case 1: handleHelp(); break;
+			case 2: handleSave(); break;
 			case 111: handleSearchStudentScore(s); break;
 			case 112: handleSearchStuWeightedScore(s); break;
 			case 113: handleSearchStuRange(); break;
@@ -77,6 +84,14 @@ public:
 	void handleHelp()
 	{
 		IoSystem::printHelp();
+	}
+	
+	void handleSave()
+	{
+		BSTree<Subject*, int>* subs = manager.getSubjects();
+		FileSystem::saveSubjects(subs);
+		IoSystem::printSuccess("±£´æ");
+		return;
 	}
 	
 	int getStu_id(string &s)

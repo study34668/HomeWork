@@ -1,5 +1,8 @@
 using namespace std;
 
+#ifndef FUNCTIONS
+#define FUNCTIONS
+
 int toNumber(string s) //字符变成数字 
 {
 	int number = 0, len = s.length(), k, num;
@@ -57,3 +60,5 @@ string toString(int number) //数字变成字符
 	
 	return result;
 }
+
+#endif
