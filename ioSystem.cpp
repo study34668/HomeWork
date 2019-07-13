@@ -78,18 +78,51 @@ public:
 	static void printHelp()
 	{
 		cout << setiosflags(ios::left);
+		cout << endl;
 		cout << "带[]的代表是可以修改的参数，|代表或者" << endl << endl;
 		cout << setw(80) << "v" << "查看版本" << endl << endl;
 		cout << setw(80) << "help" << "查看操作语句" << endl << endl;
 		cout << setw(80) << "save" << "保存数据" << endl << endl;
-		cout << setw(80) << "add student [学号] [姓名]" << "添加学生" << endl << endl;
-		cout << setw(80) << "add subject [课程号] [名称] [学分]" << "添加科目" << endl << endl;
-		cout << setw(80) << "add score [学号|学生姓名] [课程号|课程名称] [分数]" << "添加学生分数" << endl << endl;
-		cout << setw(80) << "search student score [学号|学生姓名|all] [课程号|课程名称|all]" << "查看分数" << endl << endl;
-		cout << setw(80) << "search student weight [学号|学生姓名|all]" << "查看加权" << endl << endl;
-		cout << setw(80) << "search student range" << "查看排名" << endl << endl;
-		
+		cout << setw(15) << "add" << setw(15) << "student" << setw(50) << "[学号] [姓名]" << "添加学生" << endl << endl;
+		cout << setw(15) << "add" << setw(15) << "subject" << setw(50) << "[课程号] [名称] [学分]" << "添加科目" << endl << endl;
+		cout << setw(15) << "add" << setw(15) << "score" << setw(50) << "[学号|学生姓名] [课程号|课程名称] [分数]" << "添加学生分数" << endl << endl;
+		cout << setw(15) << "search" << setw(15) << "student" << setw(50) << "[学号|学生姓名|all]" << "查看学生信息" << endl << endl;
+		cout << setw(15) << "search" << setw(15) << "subject" << setw(50) << "[课程号|课程名称]" << "查看科目信息" << endl << endl;
+		cout << setw(15) << "search" << setw(15) << "score" << setw(50) << "[学号|学生姓名|all] [课程号|课程名称|all]" << "查看分数" << endl << endl;
+		cout << setw(15) << "search" << setw(15) << "weight" << setw(50) << "[学号|学生姓名|all]" << "查看加权" << endl << endl;
+		cout << setw(15) << "search" << setw(65) << "range" << "查看排名" << endl << endl;
+		cout << setw(15) << "delete" << setw(15) << "student" << setw(50) << "[学号|学生姓名]" << "删除学生" << endl << endl;
+		cout << setw(15) << "delete" << setw(15) << "subject" << setw(50) << "[课程号|课程名称]" << "删除科目" << endl << endl;
+		cout << setw(15) << "delete" << setw(15) << "score" << setw(50) << "[学号|学生姓名] [课程号|课程名称]" << "删除学生单科分数" << endl << endl; 
 		cout << endl; 
+	}
+	
+	static void printStudent(Student* &stu)
+	{
+		cout << "学号: " << stu->id << " 姓名: " << stu->name << endl;
+	}
+	
+	static void ergodic_printStu(BSTNode<Student*, int>* &p)
+	{
+		if( p == NULL ) return;
+		if( p->lc != NULL ) ergodic_printStu(p->lc);
+		Student* stu = p->data;
+		cout << "学号: " << stu->id << " 姓名: " << stu->name << endl;
+		if( p->rc != NULL ) ergodic_printStu(p->rc);
+	}
+	
+	static void printSubject(Subject* &sub)
+	{
+		cout << "课程号: " << sub->id << " 课程名称: " << sub->name << " 学分: " << sub->credit << endl;
+	}
+	
+	static void ergodic_printSub(BSTNode<Subject*, int>* &p)
+	{
+		if( p == NULL ) return;
+		if( p->lc != NULL ) ergodic_printSub(p->lc);
+		Subject* sub = p->data;
+		cout << "课程号: " << sub->id << " 课程名称: " << sub->name << " 学分: " << sub->credit << endl;
+		if( p->rc != NULL ) ergodic_printSub(p->rc);
 	}
 	
 	static void printScore(Student* &stu, BSTree<Subject*, int>* &subs)

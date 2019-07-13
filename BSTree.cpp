@@ -267,7 +267,7 @@ private:
 		if( _bst == NULL ) return 0;
 		if( _bst->key == key )
 		{
-			if( _bst->lc == NULL && _bst->lc == NULL )
+			if( _bst->lc == NULL && _bst->rc == NULL )
 			{
 				delete _bst;
 				_bst = NULL;

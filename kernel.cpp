@@ -33,15 +33,20 @@ public:
 		switch(code)
 		{
 			case -1: handleWrong(); break;
-			case 0: handleV(); break;
-			case 1: handleHelp(); break;
-			case 2: handleSave(); break;
-			case 111: handleSearchStudentScore(s); break;
-			case 112: handleSearchStuWeightedScore(s); break;
-			case 113: handleSearchStuRange(); break;
+			case 1: handleV(); break;
+			case 2: handleHelp(); break;
+			case 3: handleSave(); break;
+			case 11: handleSearchStudent(s); break;
+			case 12: handleSearchSubject(s); break;
+			case 13: handleSearchStudentScore(s); break;
+			case 14: handleSearchStuWeightedScore(s); break;
+			case 15: handleSearchStuRange(); break;
 			case 21: handleAddSubject(s); break;
 			case 22: handleAddStudent(s); break;
 			case 23: handleAddScore(s); break;
+			case 41: handleDelSubject(s); break;
+			case 42: handleDelStudent(s); break;
+			case 43: handleDelScore(s); break; 
 		}
 	}
 	
@@ -143,7 +148,47 @@ public:
 		return manager.getSubject(sub_id);
 	}
 	
-	void handleSearchStudentScore(string s)
+	void handleSearchStudent(string &s)
+	{
+		string tmp = StrParser::getWord(s);
+		if( tmp == "all" )
+		{
+			BSTNode<Student*, int>* root = manager.getStudents()->getRoot();
+			IoSystem::ergodic_printStu(root);
+			return;
+		}
+		int stu_id = getStu_id(tmp);
+		Student* stu = getStu(stu_id);
+		if( stu == NULL )
+		{
+			handleError(ER_NOT_EXIST, "学生");
+			return;
+		}
+		IoSystem::printStudent(stu); 
+		return;
+	}
+	
+	void handleSearchSubject(string &s)
+	{
+		string tmp = StrParser::getWord(s);
+		if( tmp == "all" )
+		{
+			BSTNode<Subject*, int>* root = manager.getSubjects()->getRoot();
+			IoSystem::ergodic_printSub(root);
+			return;
+		}
+		int sub_id = getSub_id(tmp);
+		Subject* sub = getSub(sub_id);
+		if( sub == NULL )
+		{
+			handleError(ER_NOT_EXIST, "科目");
+			return;
+		}
+		IoSystem::printSubject(sub);
+		return;
+	}
+	
+	void handleSearchStudentScore(string &s)
 	{
 		string tmp1 = StrParser::getWord(s);
 		string tmp2 = StrParser::getWord(s);
@@ -267,7 +312,7 @@ public:
 		if( p->rc != NULL ) ergodic_map_push(p->rc, m);
 	}
 	
-	void handleAddSubject(string s)
+	void handleAddSubject(string &s)
 	{
 		string tmp1 = StrParser::getWord(s);
 		string tmp2 = StrParser::getWord(s);
@@ -298,7 +343,7 @@ public:
 		}
 	}
 	
-	void handleAddStudent(string s)
+	void handleAddStudent(string &s)
 	{
 		string tmp1 = StrParser::getWord(s);
 		string tmp2 = StrParser::getWord(s);
@@ -327,7 +372,7 @@ public:
 		}
 	}
 	
-	void handleAddScore(string s)
+	void handleAddScore(string &s)
 	{
 		string tmp1 = StrParser::getWord(s);
 		string tmp2 = StrParser::getWord(s);
@@ -370,6 +415,64 @@ public:
 		}
 	}
 	
+	void handleDelStudent(string &s)
+	{
+		string tmp = StrParser::getWord(s);
+		int stu_id = getStu_id(tmp);
+		if( stu_id <= 0 )
+		{
+			handleError(ER_NOT_EXIST, "学生");
+			return;
+		}
+		int code = manager.delStudent(stu_id);
+		if( code != 0 )
+		{
+			handleError(code, "学生");
+			return;
+		}
+		handleSuccess("删除学生");
+		return;
+	}
+	
+	void handleDelSubject(string &s)
+	{
+		string tmp = StrParser::getWord(s);
+		int sub_id = getSub_id(tmp);
+		if( sub_id <= 0 )
+		{
+			handleError(ER_NOT_EXIST, "科目");
+			return;
+		}
+		int code = manager.delSubject(sub_id);
+		if( code != 0 )
+		{
+			handleError(code, "科目");
+		} else {
+			handleSuccess("删除科目");
+		}
+		return;
+	}
+	
+	void handleDelScore(string &s)
+	{
+		string tmp1 = StrParser::getWord(s);
+		string tmp2 = StrParser::getWord(s);
+		int stu_id = getStu_id(tmp1);
+		int sub_id = getSub_id(tmp2);
+		if( stu_id <= 0 || sub_id <= 0 )
+		{
+			handleError(ER_NOT_EXIST, "成绩");
+			return;
+		}
+		int code = manager.delScore(stu_id, sub_id);
+		if( code != 0 )
+		{
+			handleError(code, "成绩");
+			return;
+		}
+		handleSuccess("删除成绩");
+		return;
+	}
 };
 
 #endif

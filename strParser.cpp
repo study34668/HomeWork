@@ -12,8 +12,9 @@ public:
 		while( s[i] == ' ' ) i++;
 		s = s.substr(i);
 		
-		if( s == "v" || s == "V" ) return 0;
-		if( s == "help" ) return 1;
+		if( s == "v" || s == "V" ) return 1;
+		if( s == "help" ) return 2;
+		if( s == "save" ) return 3;
 		
 		string word = StrParser::getWord(s);
 		
@@ -22,9 +23,9 @@ public:
 			return StrParser::parseAdd(s);
 		} else if( word == "search" ) {
 			return StrParser::parseSearch(s);
-		} else if( word == "save" )
+		} else if( word == "delete" )
 		{
-			return 2;
+			return StrParser::parseDel(s);
 		} else {
 			return -1;
 		}
@@ -35,19 +36,19 @@ public:
 		string word = StrParser::getWord(s);
 		if( word == "student" )
 		{
-			word = StrParser::getWord(s);
-			if( word == "score" )
-			{
-				return 111;
-			} else if( word == "weight" )
-			{
-				return 112;
-			} else if( word == "range" )
-			{
-				return 113;
-			} else {
-				return -1;
-			}
+			return 11;
+		} else if( word == "subject" )
+		{
+			return 12;
+		} else if( word == "score" )
+		{
+			return 13;
+		} else if( word == "weight" )
+		{
+			return 14;
+		} else if( word == "range" )
+		{
+			return 15;
 		} else {
 			return -1;
 		}
@@ -69,6 +70,23 @@ public:
 			return -1;
 		}
 	}
+	
+	static int parseDel(string &s)
+	{
+		string word = getWord(s);
+		if( word == "subject" )
+		{
+			return 41;
+		} else if( word == "student" )
+		{
+			return 42;
+		} else if( word == "score" )
+		{
+			return 43;
+		} else {
+			return -1;
+		}
+	} 
 	
 	static string getWord(string &s)
 	{

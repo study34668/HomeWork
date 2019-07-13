@@ -46,6 +46,22 @@ public:
 		return true;
 	}
 	
+	bool delScore(int sub_id, int credit)
+	{
+		int score;
+		if( !score_id_bst.Find(sub_id, score) ) return false;
+		score_id_bst.Delete(sub_id);
+		int tmp = weighted_score*total_credit - score*credit;
+		if( tmp > 0 )
+		{
+			weighted_score = tmp / (total_credit-credit);
+		} else {
+			weighted_score = 0;
+		}
+		total_credit -= credit;
+		return true;
+	}
+	
 	int getScore(int sub_id)
 	{
 		int tmp;
