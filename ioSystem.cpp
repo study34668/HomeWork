@@ -94,17 +94,20 @@ public:
 		cout << setw(15) << "search" << setw(15) << "student" << setw(50) << "[学号|学生姓名|all]" << "查看学生信息" << endl << endl;
 		cout << setw(15) << "search" << setw(15) << "subject" << setw(50) << "[课程号|课程名称]" << "查看科目信息" << endl << endl;
 		cout << setw(15) << "search" << setw(15) << "score" << setw(50) << "[学号|学生姓名|all] [课程号|课程名称|all]" << "查看分数" << endl << endl;
-		cout << setw(15) << "search" << setw(15) << "weight" << setw(50) << "[学号|学生姓名|all]" << "查看加权" << endl << endl;
-		cout << setw(15) << "search" << setw(65) << "range" << "查看排名" << endl << endl;
+		cout << setw(15) << "search" << setw(15) << "range" << setw(50) << "[学号|学生姓名|all]" << "查看加权和排名" << endl << endl;
 		cout << setw(15) << "delete" << setw(15) << "student" << setw(50) << "[学号|学生姓名]" << "删除学生" << endl << endl;
 		cout << setw(15) << "delete" << setw(15) << "subject" << setw(50) << "[课程号|课程名称]" << "删除科目" << endl << endl;
 		cout << setw(15) << "delete" << setw(15) << "score" << setw(50) << "[学号|学生姓名] [课程号|课程名称]" << "删除学生单科分数" << endl << endl; 
 		cout << endl; 
 	}
 	
-	static void printStudent(Student* &stu)
+	static void printStudent(vector<Student*> &stu_vector)
 	{
-		cout << "学号: " << stu->id << " 姓名: " << stu->name << endl;
+		for(int i=0; i<stu_vector.size(); i++)
+		{
+			Student* stu = stu_vector[i];
+			cout << "学号: " << stu->id << " 姓名: " << stu->name << endl;
+		}
 	}
 	
 	static void ergodic_printStu(BSTNode<Student*, int>* &p)
@@ -116,9 +119,13 @@ public:
 		if( p->rc != NULL ) ergodic_printStu(p->rc);
 	}
 	
-	static void printSubject(Subject* &sub)
+	static void printSubject(vector<Subject*> &sub_vector)
 	{
-		cout << "课程号: " << sub->id << " 课程名称: " << sub->name << " 学分: " << (double)sub->credit/2.0 << endl;
+		for(int i=0; i<sub_vector.size(); i++)
+		{
+			Subject* sub = sub_vector[i];
+			cout << "课程号: " << sub->id << " 课程名称: " << sub->name << " 学分: " << (double)sub->credit/2.0 << endl;
+		}
 	}
 	
 	static void ergodic_printSub(BSTNode<Subject*, int>* &p)
@@ -130,28 +137,45 @@ public:
 		if( p->rc != NULL ) ergodic_printSub(p->rc);
 	}
 	
-	static void printScore(Student* &stu, BSTree<Subject*, int>* &subs)
+	static void printScore(vector<Student*> &stu_vector, BSTree<Subject*, int>* &subs)
 	{
-		printStuScoreTitle(stu);
-		BSTNode<int, int>* root = stu->score_id_bst.getRoot();
-		ergodic_print_score(root, subs);
-		cout << endl;
+		for(int i=0; i<stu_vector.size(); i++)
+		{
+			Student* stu = stu_vector[i];
+			printStuScoreTitle(stu);
+			BSTNode<int, int>* root = stu->score_id_bst.getRoot();
+			ergodic_print_score(root, subs);
+			cout << endl;
+		}
 	}
 	
-	static void printSubjectScore(Subject* &sub, BSTree<Student*, int>* &stus)
+	static void printSubjectScore(vector<Subject*> &sub_vector, BSTree<Student*, int>* &stus)
 	{
-		printSubScoreTitle(sub);
-		BSTNode<Student*, int>* root = stus->getRoot();
-		ergodic_print_sub_score(root, sub->id);
-		cout << endl;
+		for(int i=0; i<sub_vector.size(); i++)
+		{
+			Subject* sub = sub_vector[i];
+			printSubScoreTitle(sub);
+			BSTNode<Student*, int>* root = stus->getRoot();
+			ergodic_print_sub_score(root, sub->id);
+			cout << endl;
+		}
 	}
 	
-	static void printOneScore(Student* &stu, Subject* &sub, int &score)
+	static void printOneScore(vector<Student*> &stu_vector, vector<Subject*> &sub_vector)
 	{
-		printStuScoreTitle(stu);
-		cout << setw(20) << sub->id << setw(20) << sub->name 
-			<< setw(20) << (double)sub->credit/2.0 << setw(20) << score << endl;
-		cout << endl;
+		for(int i=0; i<stu_vector.size(); i++)
+		{
+			Student* stu = stu_vector[i];
+			printStuScoreTitle(stu);
+			for(int i=0; i<sub_vector.size(); i++)
+			{
+				Subject* sub = sub_vector[i];
+				int score = stu->getScore(sub->id);
+				cout << setw(20) << sub->id << setw(20) << sub->name 
+					<< setw(20) << (double)sub->credit/2.0 << setw(20) << score << endl;
+			}
+			cout << endl;
+		}
 	}
 	
 	static void printWeightedScore(map<Range_info, Student*>* &m)
@@ -169,9 +193,13 @@ public:
 		cout << endl;
 	}
 	
-	static void printOneWeightedScore(Student* stu)
+	static void printOneWeightedScore(vector<Student*> &stu_vector)
 	{
-		cout << "姓名: " << stu->name << " 学号: " << stu->id << " 加权成绩: " << stu->weighted_score << endl << endl;
+		for(int i=0; i<stu_vector.size(); i++)
+		{
+			Student* stu = stu_vector[i];
+			cout << "姓名: " << stu->name << " 学号: " << stu->id << " 加权成绩: " << stu->weighted_score << endl << endl;
+		}
 	}
 	
 private:

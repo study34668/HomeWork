@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include <vector>
 using namespace std;
 
 #ifndef MANAGER
@@ -71,6 +72,8 @@ private:
 	BSTree<Student*, string> stu_name_bst;
 	BSTree<Subject*, int> sub_id_bst;
 	BSTree<Subject*, string> sub_name_bst;
+	vector<Student*> same_name_stu_vector;
+	vector<Subject*> same_name_sub_vector;
 	map<Range_info, Student*> weight_sco_map;
 	int stu_num, sub_num;
 	
@@ -92,6 +95,8 @@ public:
 		sub_id_bst.init();
 		stu_name_bst.init();
 		sub_name_bst.init();
+		same_name_stu_vector.clear();
+		same_name_sub_vector.clear();
 		weight_sco_map.clear();
 	}
 	
@@ -110,10 +115,14 @@ public:
 	{
 		Subject* newSubject;
 		if( sub_id_bst.Find(id, newSubject) ) return ER_ALREADY_EXIST;
-		if( sub_name_bst.Find(name, newSubject) ) return ER_ALREADY_EXIST;
+		
 		newSubject = new Subject(id, credit, name);
 		sub_id_bst.Insert(id, newSubject);
-		sub_name_bst.Insert(name, newSubject);
+		if( !sub_name_bst.Insert(name, newSubject) )
+		{
+			same_name_sub_vector.push_back(newSubject);
+		}
+		
 		sub_num++;
 		return OK;
 	}
@@ -122,11 +131,13 @@ public:
 	{
 		Student* newStudent;
 		if( stu_id_bst.Find(id, newStudent) ) return ER_ALREADY_EXIST;
-		if( stu_name_bst.Find(name, newStudent) ) return ER_ALREADY_EXIST;
 		
 		newStudent = new Student(id, name);
 		stu_id_bst.Insert(id, newStudent);
-		stu_name_bst.Insert(name, newStudent);
+		if( !stu_name_bst.Insert(name, newStudent) )
+		{
+			same_name_stu_vector.push_back(newStudent);
+		}
 		
 		insert_weight_sco_map(newStudent);
 		
@@ -151,16 +162,40 @@ public:
 		return OK;
 	}
 	
-	status findSubjectByName(string name, Subject* &sub)
+	status findSubjectsByName(string &name, vector<Subject*> &v)
 	{
-		if( sub_name_bst.Find(name, sub) ) return OK;
-		return ER_NOT_EXIST;
+		v.clear();
+		Subject* sub;
+		if( sub_name_bst.Find(name, sub) )
+		{
+			v.push_back(sub);
+		}
+		for(int i=0; i<same_name_sub_vector.size(); i++)
+		{
+			if( same_name_sub_vector[i]->name == name ) v.push_back(same_name_sub_vector[i]);
+		}
+		if( v.size() == 0 )
+			return ER_NOT_EXIST;
+		else
+			return OK;
 	}
 	
-	status findStudentByName(string name, Student* &stu)
+	status findStudentsByName(string &name, vector<Student*> &v)
 	{
-		if( stu_name_bst.Find(name, stu) ) return OK;
-		return ER_NOT_EXIST;
+		v.clear();
+		Student* stu;
+		if( stu_name_bst.Find(name, stu) )
+		{
+			v.push_back(stu);
+		}
+		for(int i=0; i<same_name_stu_vector.size(); i++)
+		{
+			if( same_name_stu_vector[i]->name == name ) v.push_back(same_name_stu_vector[i]);
+		}
+		if( v.size() == 0 )
+			return ER_NOT_EXIST;
+		else
+			return OK;
 	}
 	
 	status delStudent(int stu_id)
@@ -168,12 +203,26 @@ public:
 		Student* stu = NULL;
 		if( !stu_id_bst.Find(stu_id, stu) ) return ER_NOT_EXIST;
 		string name = stu->name;
+		Student* stu2 = NULL;
+		if( !stu_name_bst.Find(name, stu2) )
+		{
+			vector<Student*>::iterator i;
+			for(i=same_name_stu_vector.begin(); i!=same_name_stu_vector.end(); i++)
+			{
+				if( (*i)->name == name )
+				{
+					same_name_stu_vector.erase(i);
+					break;
+				}
+			}
+		} else {
+			stu_name_bst.Delete(name);
+		}
 		
 		del_weight_sco_map(stu);
 		
 		delete stu;
 		stu_id_bst.Delete(stu_id);
-		stu_name_bst.Delete(name);
 		return OK;
 	}
 	
@@ -204,9 +253,26 @@ public:
 		if( !sub_id_bst.Find(sub_id, sub) ) return ER_NOT_EXIST;
 		int credit = sub->credit;
 		string name = sub->name;
+		
+		Subject* sub2 = NULL;
+		if( !sub_name_bst.Find(name, sub2) )
+		{
+			vector<Subject*>::iterator i;
+			for(i=same_name_sub_vector.begin(); i!=same_name_sub_vector.end(); i++)
+			{
+				if( (*i)->name == name )
+				{
+					same_name_sub_vector.erase(i);
+					break;
+				}
+			}
+		} else {
+			sub_name_bst.Delete(name);
+		}
+		
 		delete sub;
 		sub_id_bst.Delete(sub_id);
-		sub_name_bst.Delete(name);
+		
 		BSTNode<Student*, int>* root = stu_id_bst.getRoot();
 		ergodic_del_score(root, sub_id, credit);
 		return OK;

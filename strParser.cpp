@@ -43,12 +43,9 @@ public:
 		} else if( word == "score" )
 		{
 			return 13;
-		} else if( word == "weight" )
-		{
-			return 14;
 		} else if( word == "range" )
 		{
-			return 15;
+			return 14;
 		} else {
 			return -1;
 		}

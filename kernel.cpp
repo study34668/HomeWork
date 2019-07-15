@@ -5,6 +5,7 @@
 #include "functions.cpp"
 #include <string>
 #include <map>
+#include <vector>
 using namespace std;
 
 #ifndef KERNEL
@@ -39,8 +40,7 @@ public:
 			case 11: handleSearchStudent(s); break;
 			case 12: handleSearchSubject(s); break;
 			case 13: handleSearchStudentScore(s); break;
-			case 14: handleSearchStuWeightedScore(s); break;
-			case 15: handleSearchStuRange(); break;
+			case 14: handleSearchStuRange(s); break;
 			case 21: handleAddSubject(s); break;
 			case 22: handleAddStudent(s); break;
 			case 23: handleAddScore(s); break;
@@ -107,48 +107,16 @@ public:
 		return;
 	}
 	
-	int getStu_id(string &s)
+	Student* getStu(string &s)
 	{
 		int stu_id = toNumber(s);
-		if( stu_id <= 0 )
-		{
-			Student* stu = NULL;
-			manager.findStudentByName(s, stu);
-			if( stu == NULL )
-			{
-				return 0;
-			}
-			return stu->id;
-		} else {
-			return stu_id;
-		}
-	}
-	
-	Student* getStu(int stu_id)
-	{
 		if( stu_id <= 0 ) return NULL;
 		return manager.getStudent(stu_id);
 	}
 	
-	int getSub_id(string &s)
+	Subject* getSub(string &s)
 	{
 		int sub_id = toNumber(s);
-		if( sub_id <= 0 )
-		{
-			Subject* sub = NULL;
-			manager.findSubjectByName(s, sub);
-			if( sub == NULL )
-			{
-				return 0;
-			}
-			return sub->id;
-		} else {
-			return sub_id;
-		}
-	}
-	
-	Subject* getSub(int sub_id)
-	{
 		if( sub_id <= 0 ) return NULL;
 		return manager.getSubject(sub_id);
 	}
@@ -162,14 +130,20 @@ public:
 			IoSystem::ergodic_printStu(root);
 			return;
 		}
-		int stu_id = getStu_id(tmp);
-		Student* stu = getStu(stu_id);
+		vector<Student*> stu_vector;
+		Student* stu = getStu(tmp);
 		if( stu == NULL )
 		{
-			handleError(ER_NOT_EXIST, "学生");
-			return;
+			manager.findStudentsByName(tmp, stu_vector);
+			if( stu_vector.size() == 0 )
+			{
+				handleError(ER_NOT_EXIST, "学生");
+				return;
+			}
+		} else {
+			stu_vector.push_back(stu);
 		}
-		IoSystem::printStudent(stu); 
+		IoSystem::printStudent(stu_vector); 
 		return;
 	}
 	
@@ -182,14 +156,20 @@ public:
 			IoSystem::ergodic_printSub(root);
 			return;
 		}
-		int sub_id = getSub_id(tmp);
-		Subject* sub = getSub(sub_id);
+		vector<Subject*> sub_vector;
+		Subject* sub = getSub(tmp);
 		if( sub == NULL )
 		{
-			handleError(ER_NOT_EXIST, "科目");
-			return;
+			manager.findSubjectsByName(tmp, sub_vector);
+			if( sub_vector.size() == 0 )
+			{
+				handleError(ER_NOT_EXIST, "科目");
+				return;
+			}
+		} else {
+			sub_vector.push_back(sub);
 		}
-		IoSystem::printSubject(sub);
+		IoSystem::printSubject(sub_vector);
 		return;
 	}
 	
@@ -213,48 +193,62 @@ public:
 				ergodic_handle_searchAll(root, subs);
 				return;
 			} else {
-				int sub_id = getSub_id(tmp2);
-				Subject* sub = getSub(sub_id);
+				vector<Subject*> sub_vector;
+				sub_vector.clear();
+				Subject* sub = getSub(tmp2);
 				if( sub == NULL )
 				{
-					handleError(ER_NOT_EXIST, "科目");
-					return;
+					manager.findSubjectsByName(tmp2, sub_vector);
+					if( sub_vector.size() == 0 )
+					{
+						handleError(ER_NOT_EXIST, "科目");
+						return;
+					}
+				} else {
+					sub_vector.push_back(sub);
 				}
 				
 				BSTree<Student*, int>* stus = manager.getStudents();
-				IoSystem::printSubjectScore(sub, stus);
+				IoSystem::printSubjectScore(sub_vector, stus);
 				return;
 			}
 		}
 		
-		int stu_id = getStu_id(tmp1);
-		Student* stu = getStu(stu_id);
+		vector<Student*> stu_vector;
+		Student* stu = getStu(tmp1);
 		if( stu == NULL )
 		{
-			handleError(ER_NOT_EXIST, "学生");
-			return;
+			manager.findStudentsByName(tmp1, stu_vector);
+			if( stu_vector.size() == 0 )
+			{
+				handleError(ER_NOT_EXIST, "学生");
+				return;
+			}
+		} else {
+			stu_vector.push_back(stu);
 		}
 		
 		if( tmp2 == "all" )
 		{
 			BSTree<Subject*, int>* subs = manager.getSubjects();
-			IoSystem::printScore(stu, subs);
+			IoSystem::printScore(stu_vector, subs);
 			return;
 		} else {
-			int sub_id = getSub_id(tmp2);
-			Subject* sub = getSub(sub_id);
+			vector<Subject*> sub_vector;
+			sub_vector.clear();
+			Subject* sub = getSub(tmp2);
 			if( sub == NULL )
 			{
-				handleError(ER_NOT_EXIST, "科目");
-				return;
+				manager.findSubjectsByName(tmp2, sub_vector);
+				if( sub_vector.size() == 0 )
+				{
+					handleError(ER_NOT_EXIST, "科目");
+					return;
+				}
+			} else {
+				sub_vector.push_back(sub);
 			}
-			int score = stu->getScore(sub_id);
-			if( score == -1 )
-			{
-				handleError(ER_NOT_EXIST, "学生此科目成绩");
-				return;
-			}
-			IoSystem::printOneScore(stu, sub, score);
+			IoSystem::printOneScore(stu_vector, sub_vector);
 			return;
 		}
 		
@@ -265,11 +259,14 @@ public:
 		if( p == NULL ) return;
 		if( p->lc != NULL ) ergodic_handle_searchAll(p->lc, subs);
 		Student* stu = p->data;
-		IoSystem::printScore(stu, subs);
+		vector<Student*> stu_vector;
+		stu_vector.clear();
+		stu_vector.push_back(stu);
+		IoSystem::printScore(stu_vector, subs);
 		if( p->rc != NULL ) ergodic_handle_searchAll(p->rc, subs);
 	}
 	
-	void handleSearchStuWeightedScore(string &s)
+	void handleSearchStuRange(string &s)
 	{
 		string tmp1 = StrParser::getWord(s);
 		
@@ -281,23 +278,29 @@ public:
 		
 		if( tmp1 == "all" )
 		{
-			handleSearchStuRange();
+			handleSearchAllRange();
 			return;
 		}
 		
-		int stu_id = getStu_id(tmp1);
-		Student* stu = getStu(stu_id);
+		vector<Student*> stu_vector;
+		Student* stu = getStu(tmp1);
 		if( stu == NULL )
 		{
-			handleError(ER_NOT_EXIST, "学生");
-			return;
+			manager.findStudentsByName(tmp1, stu_vector);
+			if( stu_vector.size() == 0 )
+			{
+				handleError(ER_NOT_EXIST, "学生");
+				return;
+			}
+		} else {
+			stu_vector.push_back(stu);
 		}
 		
-		IoSystem::printOneWeightedScore(stu);
+		IoSystem::printOneWeightedScore(stu_vector);
 		return;
 	}
 	
-	void handleSearchStuRange()
+	void handleSearchAllRange()
 	{
 		map<Range_info, Student*>* weight_sco_map = manager.getWeightScoMap();
 		IoSystem::printWeightedScore(weight_sco_map);
@@ -408,8 +411,8 @@ public:
 			return;
 		}
 		
-		int stu_id = getStu_id(tmp1);
-		int sub_id = getSub_id(tmp2);
+		int stu_id = toNumber(tmp1);
+		int sub_id = toNumber(tmp2);
 		int score = toNumber(tmp3);
 		
 		if( score == 0 )
@@ -420,14 +423,32 @@ public:
 		
 		if( stu_id == 0 )
 		{
-			handleError(ER_NOT_EXIST, "学生");
-			return;
+			vector<Student*> stu_vector;
+			manager.findStudentsByName(tmp1, stu_vector);
+			if( stu_vector.size() == 0 )
+			{
+				handleError(ER_NOT_EXIST, "学生");
+				return;
+			} else if( stu_vector.size() > 1 ) {
+				handleWrong("请准确指定一名学生");
+				return;
+			}
+			stu_id = stu_vector[0]->id;
 		}
 		
 		if( sub_id == 0 )
 		{
-			handleError(ER_NOT_EXIST, "科目");
-			return;
+			vector<Subject*> sub_vector;
+			manager.findSubjectsByName(tmp2, sub_vector);
+			if( sub_vector.size() == 0 )
+			{
+				handleError(ER_NOT_EXIST, "科目");
+				return;
+			} else if( sub_vector.size() > 1 ) {
+				handleWrong("请准确指定一门科目");
+				return;
+			}
+			sub_id = sub_vector[0]->id;
 		}
 		
 		int code = manager.addStudentScore(stu_id, sub_id, score);
@@ -442,10 +463,10 @@ public:
 	void handleDelStudent(string &s)
 	{
 		string tmp = StrParser::getWord(s);
-		int stu_id = getStu_id(tmp);
+		int stu_id = toNumber(tmp);
 		if( stu_id <= 0 )
 		{
-			handleError(ER_NOT_EXIST, "学生");
+			handleWrong("删除学生请使用学号");
 			return;
 		}
 		int code = manager.delStudent(stu_id);
@@ -461,10 +482,10 @@ public:
 	void handleDelSubject(string &s)
 	{
 		string tmp = StrParser::getWord(s);
-		int sub_id = getSub_id(tmp);
+		int sub_id = toNumber(tmp);
 		if( sub_id <= 0 )
 		{
-			handleError(ER_NOT_EXIST, "科目");
+			handleWrong("删除科目请使用科目号");
 			return;
 		}
 		int code = manager.delSubject(sub_id);
@@ -481,11 +502,11 @@ public:
 	{
 		string tmp1 = StrParser::getWord(s);
 		string tmp2 = StrParser::getWord(s);
-		int stu_id = getStu_id(tmp1);
-		int sub_id = getSub_id(tmp2);
+		int stu_id = toNumber(tmp1);
+		int sub_id = toNumber(tmp2);
 		if( stu_id <= 0 || sub_id <= 0 )
 		{
-			handleError(ER_NOT_EXIST, "成绩");
+			handleWrong("删除成绩请使用学号和课程号");
 			return;
 		}
 		int code = manager.delScore(stu_id, sub_id);
