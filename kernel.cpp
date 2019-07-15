@@ -82,6 +82,11 @@ public:
 		IoSystem::printWrong();
 	}
 	
+	void handleWrong(string s)
+	{
+		IoSystem::printWrong(s);
+	}
+	
 	void handleV()
 	{
 		IoSystem::printV();
@@ -294,23 +299,30 @@ public:
 	
 	void handleSearchStuRange()
 	{
-		BSTree<Student*, int>* stus = manager.getStudents();
-		BSTNode<Student*, int>* root = stus->getRoot();
-		multimap<double, Student*> map;
-		map.clear();
-		ergodic_map_push(root, map);
-		IoSystem::printWeightedScore(map);
+		map<Range_info, Student*>* weight_sco_map = manager.getWeightScoMap();
+		IoSystem::printWeightedScore(weight_sco_map);
 		return;
 	}
 	
-	void ergodic_map_push(BSTNode<Student*, int>* &p, multimap<double, Student*> &m)
-	{
-		if( p == NULL ) return;
-		if( p->lc != NULL ) ergodic_map_push(p->lc, m);
-		Student* stu = p->data;
-		m.insert(pair<double, Student*>(stu->weighted_score, stu));
-		if( p->rc != NULL ) ergodic_map_push(p->rc, m);
-	}
+//	void handleSearchStuRange()
+//	{
+//		BSTree<Student*, int>* stus = manager.getStudents();
+//		BSTNode<Student*, int>* root = stus->getRoot();
+//		multimap<double, Student*> map;
+//		map.clear();
+//		ergodic_map_push(root, map);
+//		IoSystem::printWeightedScore(map);
+//		return;
+//	}
+	
+//	void ergodic_map_push(BSTNode<Student*, int>* &p, multimap<double, Student*> &m)
+//	{
+//		if( p == NULL ) return;
+//		if( p->lc != NULL ) ergodic_map_push(p->lc, m);
+//		Student* stu = p->data;
+//		m.insert(pair<double, Student*>(stu->weighted_score, stu));
+//		if( p->rc != NULL ) ergodic_map_push(p->rc, m);
+//	}
 	
 	void handleAddSubject(string &s)
 	{
@@ -326,7 +338,19 @@ public:
 		
 		int id = toNumber(tmp1);
 		string name = tmp2;
-		int credit = toNumber(tmp3);
+		int credit = 0;
+		string credit_int = StrParser::getWord(tmp3, '.');
+		credit = toNumber(credit_int);
+		if( tmp3 == "" )
+		{
+			credit *= 2;
+		} else if( tmp3 == "5" )
+		{
+			credit = credit*2+1;
+		} else {
+			handleWrong("暂不支持 .5 外的小数学分");
+			return;
+		}
 		
 		if( id == 0 || credit == 0 )
 		{

@@ -16,6 +16,11 @@ public:
 		cout << "您的语句有误，请输入 help 获取帮助" << endl << endl;
 	}
 	
+	static void printWrong(string s)
+	{
+		cout << s << endl << endl;
+	}
+	
 	static void printSuccess(string s)
 	{
 		cout << s << "成功" << endl << endl;
@@ -113,7 +118,7 @@ public:
 	
 	static void printSubject(Subject* &sub)
 	{
-		cout << "课程号: " << sub->id << " 课程名称: " << sub->name << " 学分: " << sub->credit << endl;
+		cout << "课程号: " << sub->id << " 课程名称: " << sub->name << " 学分: " << (double)sub->credit/2.0 << endl;
 	}
 	
 	static void ergodic_printSub(BSTNode<Subject*, int>* &p)
@@ -121,7 +126,7 @@ public:
 		if( p == NULL ) return;
 		if( p->lc != NULL ) ergodic_printSub(p->lc);
 		Subject* sub = p->data;
-		cout << "课程号: " << sub->id << " 课程名称: " << sub->name << " 学分: " << sub->credit << endl;
+		cout << "课程号: " << sub->id << " 课程名称: " << sub->name << " 学分: " << (double)sub->credit/2.0 << endl;
 		if( p->rc != NULL ) ergodic_printSub(p->rc);
 	}
 	
@@ -145,21 +150,21 @@ public:
 	{
 		printStuScoreTitle(stu);
 		cout << setw(20) << sub->id << setw(20) << sub->name 
-			<< setw(20) << sub->credit << setw(20) << score << endl;
+			<< setw(20) << (double)sub->credit/2.0 << setw(20) << score << endl;
 		cout << endl;
 	}
 	
-	static void printWeightedScore(multimap<double, Student*> &m)
+	static void printWeightedScore(map<Range_info, Student*>* &m)
 	{
 		cout << setiosflags(ios::left);
 		cout << setw(20) << "排名" << setw(20) << "姓名" << setw(20) << "学号" << setw(20) << "加权成绩" << endl;
 		int cont = 0;
-		multimap<double, Student*>::reverse_iterator i;
-		for(i=m.rbegin(); i!=m.rend(); i++)
+		map<Range_info, Student*>::reverse_iterator i;
+		for(i=m->rbegin(); i!=m->rend(); i++)
 		{
 			++cont;
 			cout << setw(20) << cont << setw(20) << i->second->name
-				<< setw(20) << i->second->id << setw(20) << i->first << endl;
+				<< setw(20) << i->second->id << setw(20) << i->second->weighted_score << endl;
 		}
 		cout << endl;
 	}
@@ -180,7 +185,7 @@ private:
 	static void printSubScoreTitle(Subject* &sub)
 	{
 		cout << setiosflags(ios::left);
-		cout << "课程号: " << sub->id << " 课程名称: " << sub->name << " 学分: " << sub->credit << endl;
+		cout << "课程号: " << sub->id << " 课程名称: " << sub->name << " 学分: " << (double)sub->credit/2.0 << endl;
 		cout << setw(20) << "学号" << setw(20) << "姓名" << setw(20) << "成绩" << endl;
 	}
 	
@@ -193,7 +198,7 @@ private:
 		if( subs->Find(sub_id, sub) )
 		{
 			cout << setw(20) << sub->id << setw(20) << sub->name 
-				<< setw(20) << sub->credit << setw(20) << p->data << endl;
+				<< setw(20) << (double)sub->credit/2.0 << setw(20) << p->data << endl;
 		}
 		if( p->rc != NULL ) ergodic_print_score(p->rc, subs);
 	}
