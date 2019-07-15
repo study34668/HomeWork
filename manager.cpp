@@ -294,6 +294,13 @@ public:
 		Range_info range_info;
 		range_info.weight_score = stu->weighted_score;
 		range_info.stu_id = stu->id;
+		
+		map<Range_info, Student*>::iterator i = weight_sco_map.find(range_info);
+		map<Range_info, Student*>::iterator it;
+		for(it=weight_sco_map.begin(); it!=i; it++)
+		{
+			it->second->rank = it->second->rank-1;
+		}
 		weight_sco_map.erase(range_info);
 	}
 	
@@ -303,6 +310,19 @@ public:
 		range_info.weight_score = stu->weighted_score;
 		range_info.stu_id = stu->id;
 		weight_sco_map.insert( pair<Range_info, Student*>(range_info, stu) );
+		
+		map<Range_info, Student*>::iterator i = weight_sco_map.find(range_info);
+		if( (i+1) != weight_sco_map.end() )
+		{
+			stu->rank = (i+1)->second->rank+1;
+		} else {
+			stu->rank = 1;
+		}
+		map<Range_info, Student*>::iterator it;
+		for(it=weight_sco_map.begin(); it!=i; it++)
+		{
+			it->second->rank = it->second->rank+1;
+		}
 	}
 	
 	Student* getStudent(int stu_id)

@@ -43,7 +43,7 @@ public:
 		} else if( word == "score" )
 		{
 			return 13;
-		} else if( word == "range" )
+		} else if( word == "rank" )
 		{
 			return 14;
 		} else {

@@ -94,7 +94,7 @@ public:
 		cout << setw(15) << "search" << setw(15) << "student" << setw(50) << "[学号|学生姓名|all]" << "查看学生信息" << endl << endl;
 		cout << setw(15) << "search" << setw(15) << "subject" << setw(50) << "[课程号|课程名称]" << "查看科目信息" << endl << endl;
 		cout << setw(15) << "search" << setw(15) << "score" << setw(50) << "[学号|学生姓名|all] [课程号|课程名称|all]" << "查看分数" << endl << endl;
-		cout << setw(15) << "search" << setw(15) << "range" << setw(50) << "[学号|学生姓名|all]" << "查看加权和排名" << endl << endl;
+		cout << setw(15) << "search" << setw(15) << "rank" << setw(50) << "[学号|学生姓名|all]" << "查看加权和排名" << endl << endl;
 		cout << setw(15) << "delete" << setw(15) << "student" << setw(50) << "[学号|学生姓名]" << "删除学生" << endl << endl;
 		cout << setw(15) << "delete" << setw(15) << "subject" << setw(50) << "[课程号|课程名称]" << "删除科目" << endl << endl;
 		cout << setw(15) << "delete" << setw(15) << "score" << setw(50) << "[学号|学生姓名] [课程号|课程名称]" << "删除学生单科分数" << endl << endl; 
@@ -198,7 +198,7 @@ public:
 		for(int i=0; i<stu_vector.size(); i++)
 		{
 			Student* stu = stu_vector[i];
-			cout << "姓名: " << stu->name << " 学号: " << stu->id << " 加权成绩: " << stu->weighted_score << endl << endl;
+			cout << "姓名: " << stu->name << " 学号: " << stu->id << " 加权成绩: " << stu->weighted_score << " 排名: " << stu->rank << endl << endl;
 		}
 	}
 	
@@ -206,7 +206,7 @@ private:
 	static void printStuScoreTitle(Student* &stu)
 	{
 		cout << setiosflags(ios::left);
-		cout << "姓名: " << stu->name << " 学号: " << stu->id << endl;
+		cout << "姓名: " << stu->name << " 学号: " << stu->id << " 加权成绩: " << stu->weighted_score << " 排名: " << stu->rank << endl;
 		cout << setw(20) << "课程号" << setw(20) << "课程名称" << setw(20) << "学分" << setw(20) << "成绩" << endl;
 	}
 	

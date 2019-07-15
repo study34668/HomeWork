@@ -40,7 +40,7 @@ public:
 			case 11: handleSearchStudent(s); break;
 			case 12: handleSearchSubject(s); break;
 			case 13: handleSearchStudentScore(s); break;
-			case 14: handleSearchStuRange(s); break;
+			case 14: handleSearchStuRank(s); break;
 			case 21: handleAddSubject(s); break;
 			case 22: handleAddStudent(s); break;
 			case 23: handleAddScore(s); break;
@@ -266,7 +266,7 @@ public:
 		if( p->rc != NULL ) ergodic_handle_searchAll(p->rc, subs);
 	}
 	
-	void handleSearchStuRange(string &s)
+	void handleSearchStuRank(string &s)
 	{
 		string tmp1 = StrParser::getWord(s);
 		
@@ -278,7 +278,7 @@ public:
 		
 		if( tmp1 == "all" )
 		{
-			handleSearchAllRange();
+			handleSearchAllRank();
 			return;
 		}
 		
@@ -300,7 +300,7 @@ public:
 		return;
 	}
 	
-	void handleSearchAllRange()
+	void handleSearchAllRank()
 	{
 		map<Range_info, Student*>* weight_sco_map = manager.getWeightScoMap();
 		IoSystem::printWeightedScore(weight_sco_map);

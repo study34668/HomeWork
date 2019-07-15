@@ -13,6 +13,7 @@ public:
 	BSTree<int, int> score_id_bst;
 	int total_credit;
 	double weighted_score;
+	int rank;
 	
 	Student()
 	{
