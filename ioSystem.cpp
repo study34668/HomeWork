@@ -91,10 +91,16 @@ public:
 		cout << setw(15) << "add" << setw(15) << "student" << setw(50) << "[学号] [姓名]" << "添加学生" << endl << endl;
 		cout << setw(15) << "add" << setw(15) << "subject" << setw(50) << "[课程号] [名称] [学分]" << "添加科目" << endl << endl;
 		cout << setw(15) << "add" << setw(15) << "score" << setw(50) << "[学号|学生姓名] [课程号|课程名称] [分数]" << "添加学生分数" << endl << endl;
+		
 		cout << setw(15) << "search" << setw(15) << "student" << setw(50) << "[学号|学生姓名|all]" << "查看学生信息" << endl << endl;
 		cout << setw(15) << "search" << setw(15) << "subject" << setw(50) << "[课程号|课程名称]" << "查看科目信息" << endl << endl;
 		cout << setw(15) << "search" << setw(15) << "score" << setw(50) << "[学号|学生姓名|all] [课程号|课程名称|all]" << "查看分数" << endl << endl;
 		cout << setw(15) << "search" << setw(15) << "rank" << setw(50) << "[学号|学生姓名|all]" << "查看加权和排名" << endl << endl;
+		
+		cout << setw(15) << "update" << setw(15) << "student" << setw(50) << "[学号|学生姓名] [学号] [姓名]" << "修改学生信息" << endl << endl;
+		cout << setw(15) << "update" << setw(15) << "subject" << setw(50) << "[课程号|课程名称] [课程号] [名称] [学分]" << "修改科目信息" << endl << endl;
+		cout << setw(15) << "update" << setw(15) << "score" << setw(50) << "[学号|学生姓名] [课程号|课程名称] [分数]" << "修改学生分数" << endl << endl;
+		
 		cout << setw(15) << "delete" << setw(15) << "student" << setw(50) << "[学号|学生姓名]" << "删除学生" << endl << endl;
 		cout << setw(15) << "delete" << setw(15) << "subject" << setw(50) << "[课程号|课程名称]" << "删除科目" << endl << endl;
 		cout << setw(15) << "delete" << setw(15) << "score" << setw(50) << "[学号|学生姓名] [课程号|课程名称]" << "删除学生单科分数" << endl << endl; 
@@ -143,7 +149,7 @@ public:
 		{
 			Student* stu = stu_vector[i];
 			printStuScoreTitle(stu);
-			BSTNode<int, int>* root = stu->score_id_bst.getRoot();
+			BSTNode<double, int>* root = stu->score_id_bst.getRoot();
 			ergodic_print_score(root, subs);
 			cout << endl;
 		}
@@ -170,9 +176,9 @@ public:
 			for(int i=0; i<sub_vector.size(); i++)
 			{
 				Subject* sub = sub_vector[i];
-				int score = stu->getScore(sub->id);
+				double score = stu->getScore(sub->id);
 				cout << setw(20) << sub->id << setw(20) << sub->name 
-					<< setw(20) << (double)sub->credit/2.0 << setw(20) << score << endl;
+					<< setw(20) << (double)(sub->credit)/2.0 << setw(20) << score << endl;
 			}
 			cout << endl;
 		}
@@ -217,7 +223,7 @@ private:
 		cout << setw(20) << "学号" << setw(20) << "姓名" << setw(20) << "成绩" << endl;
 	}
 	
-	static void ergodic_print_score(BSTNode<int, int>* &p, BSTree<Subject*, int>* &subs)
+	static void ergodic_print_score(BSTNode<double, int>* &p, BSTree<Subject*, int>* &subs)
 	{
 		if( p == NULL ) return;
 		if( p->lc != NULL ) ergodic_print_score(p->lc, subs);
@@ -226,7 +232,7 @@ private:
 		if( subs->Find(sub_id, sub) )
 		{
 			cout << setw(20) << sub->id << setw(20) << sub->name 
-				<< setw(20) << (double)sub->credit/2.0 << setw(20) << p->data << endl;
+				<< setw(20) << (double)(sub->credit)/2.0 << setw(20) << p->data << endl;
 		}
 		if( p->rc != NULL ) ergodic_print_score(p->rc, subs);
 	}
@@ -236,7 +242,7 @@ private:
 		if( p == NULL ) return;
 		if( p->lc != NULL ) ergodic_print_sub_score(p->lc, sub_id);
 		Student* stu = p->data;
-		int score = stu->getScore(sub_id);
+		double score = stu->getScore(sub_id);
 		if( score != -1 )
 		{
 			cout << setw(20) << stu->id << setw(20) << stu->name << setw(20) << score << endl;

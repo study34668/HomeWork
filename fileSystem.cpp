@@ -65,7 +65,7 @@ public:
 					{
 						tmp = StrParser::getWord(s, '|');
 						int sub_id = toNumber(StrParser::getWord(tmp, ','));
-						int score = toNumber(tmp);
+						double score = toScore(tmp);
 						manager.addStudentScore(id, sub_id, score);
 					}
 				}
@@ -105,7 +105,7 @@ public:
 		stu_file << "]}" << endl;
 	}
 	
-	static void saveScore(int id, int score)
+	static void saveScore(int id, double score)
 	{
 		stu_file << id << "," << score << "|";
 	}

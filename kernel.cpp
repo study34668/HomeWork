@@ -37,13 +37,20 @@ public:
 			case 1: handleV(); break;
 			case 2: handleHelp(); break;
 			case 3: handleSave(); break;
+			
 			case 11: handleSearchStudent(s); break;
 			case 12: handleSearchSubject(s); break;
 			case 13: handleSearchStudentScore(s); break;
 			case 14: handleSearchStuRank(s); break;
+			
 			case 21: handleAddSubject(s); break;
 			case 22: handleAddStudent(s); break;
 			case 23: handleAddScore(s); break;
+			
+			case 31: handleUpdateSubject(s); break;
+			case 32: handleUpdateStudent(s); break;
+			case 33: handleUpdateScore(s); break;
+			
 			case 41: handleDelSubject(s); break;
 			case 42: handleDelStudent(s); break;
 			case 43: handleDelScore(s); break; 
@@ -413,9 +420,9 @@ public:
 		
 		int stu_id = toNumber(tmp1);
 		int sub_id = toNumber(tmp2);
-		int score = toNumber(tmp3);
+		double score = toScore(tmp3);
 		
-		if( score == 0 )
+		if( score <= 0 )
 		{
 			handleWrong();
 			return;
@@ -423,59 +430,59 @@ public:
 		
 		if( stu_id == 0 )
 		{
-			vector<Student*> stu_vector;
-			manager.findStudentsByName(tmp1, stu_vector);
-			if( stu_vector.size() == 0 )
-			{
-				handleError(ER_NOT_EXIST, "学生");
-				return;
-			} else if( stu_vector.size() > 1 ) {
-				handleWrong("请准确指定一名学生");
-				return;
-			}
-			stu_id = stu_vector[0]->id;
+			handleGetStuIdByName(tmp1, stu_id);
 		}
-		
 		if( sub_id == 0 )
 		{
-			vector<Subject*> sub_vector;
-			manager.findSubjectsByName(tmp2, sub_vector);
-			if( sub_vector.size() == 0 )
-			{
-				handleError(ER_NOT_EXIST, "科目");
-				return;
-			} else if( sub_vector.size() > 1 ) {
-				handleWrong("请准确指定一门科目");
-				return;
-			}
-			sub_id = sub_vector[0]->id;
+			handleGetSubIdByName(tmp2, sub_id);
 		}
 		
-		int code = manager.addStudentScore(stu_id, sub_id, score);
-		if( code == 0 )
+		if( stu_id != 0 && sub_id != 0 )
 		{
-			handleSuccess("添加学生分数");
-		} else {
-			handleError(code);
+			int code = manager.addStudentScore(stu_id, sub_id, score);
+			if( code == 0 )
+			{
+				handleSuccess("添加学生分数");
+			} else {
+				handleError(code);
+			}
 		}
+		return;
+	}
+	
+	void handleUpdateStudent(string &s)
+	{
+		
+	}
+	
+	void handleUpdateSubject(string &s)
+	{
+		
+	}
+	
+	void handleUpdateScore(string &s)
+	{
+		
 	}
 	
 	void handleDelStudent(string &s)
 	{
 		string tmp = StrParser::getWord(s);
 		int stu_id = toNumber(tmp);
-		if( stu_id <= 0 )
+		if( stu_id == 0 )
 		{
-			handleWrong("删除学生请使用学号");
-			return;
+			handleGetStuIdByName(tmp1, stu_id);
 		}
-		int code = manager.delStudent(stu_id);
-		if( code != 0 )
+		if( stu_id != 0 )
 		{
-			handleError(code, "学生");
-			return;
+			int code = manager.delStudent(stu_id);
+			if( code != 0 )
+			{
+				handleError(code, "学生");
+				return;
+			}
+			handleSuccess("删除学生");
 		}
-		handleSuccess("删除学生");
 		return;
 	}
 	
@@ -483,17 +490,19 @@ public:
 	{
 		string tmp = StrParser::getWord(s);
 		int sub_id = toNumber(tmp);
-		if( sub_id <= 0 )
+		if( sub_id == 0 )
 		{
-			handleWrong("删除科目请使用科目号");
-			return;
+			handleGetSubIdByName(tmp2, sub_id);
 		}
-		int code = manager.delSubject(sub_id);
-		if( code != 0 )
+		if( sub_id != 0 )
 		{
-			handleError(code, "科目");
-		} else {
-			handleSuccess("删除科目");
+			int code = manager.delSubject(sub_id);
+			if( code != 0 )
+			{
+				handleError(code, "科目");
+			} else {
+				handleSuccess("删除科目");
+			}
 		}
 		return;
 	}
@@ -504,19 +513,59 @@ public:
 		string tmp2 = StrParser::getWord(s);
 		int stu_id = toNumber(tmp1);
 		int sub_id = toNumber(tmp2);
-		if( stu_id <= 0 || sub_id <= 0 )
+		if( stu_id == 0 )
 		{
-			handleWrong("删除成绩请使用学号和课程号");
-			return;
+			handleGetStuIdByName(tmp1, stu_id);
 		}
-		int code = manager.delScore(stu_id, sub_id);
-		if( code != 0 )
+		if( sub_id == 0 )
 		{
-			handleError(code, "成绩");
-			return;
+			handleGetSubIdByName(tmp2, sub_id);
 		}
-		handleSuccess("删除成绩");
+		if( stu_id != 0 && sub_id != 0 )
+		{
+			int code = manager.delScore(stu_id, sub_id);
+			if( code != 0 )
+			{
+				handleError(code, "成绩");
+				return;
+			}
+			handleSuccess("删除成绩");
+		}
 		return;
+	}
+	
+	void handleGetStuIdByName(string &s, int &stu_id)
+	{
+		vector<Student*> stu_vector;
+		manager.findStudentsByName(s, stu_vector);
+		if( stu_vector.size() == 0 )
+		{
+			stu_id = 0;
+			handleError(ER_NOT_EXIST, "学生");
+			return;
+		} else if( stu_vector.size() > 1 ) {
+			stu_id = 0;
+			handleWrong("请准确指定一名学生");
+			return;
+		}
+		stu_id = stu_vector[0]->id;
+	}
+	
+	void handleGetSubIdByName(string &s, int &sub_id)
+	{
+		vector<Subject*> sub_vector;
+		manager.findSubjectsByName(s, sub_vector);
+		if( sub_vector.size() == 0 )
+		{
+			sub_id = 0;
+			handleError(ER_NOT_EXIST, "科目");
+			return;
+		} else if( sub_vector.size() > 1 ) {
+			sub_id = 0;
+			handleWrong("请准确指定一门科目");
+			return;
+		}
+		sub_id = sub_vector[0]->id;
 	}
 };
 

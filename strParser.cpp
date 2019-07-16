@@ -23,6 +23,9 @@ public:
 			return StrParser::parseAdd(s);
 		} else if( word == "search" ) {
 			return StrParser::parseSearch(s);
+		} else if( word == "update" )
+		{
+			return StrParser::parseUpdate(s);
 		} else if( word == "delete" )
 		{
 			return StrParser::parseDel(s);
@@ -63,6 +66,23 @@ public:
 		} else if( word == "score" )
 		{
 			return 23;
+		} else {
+			return -1;
+		}
+	}
+	
+	static int parseUpdate(string &s)
+	{
+		string word = getWord(s);
+		if( word == "subject" )
+		{
+			return 31;
+		} else if( word == "student" )
+		{
+			return 32;
+		} else if( word == "score" )
+		{
+			return 33;
 		} else {
 			return -1;
 		}

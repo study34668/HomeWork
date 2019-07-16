@@ -145,7 +145,7 @@ public:
 		return OK;
 	}
 	
-	status addStudentScore(int stu_id, int sub_id, int score)
+	status addStudentScore(int stu_id, int sub_id, double score)
 	{
 		Student* stu = NULL;
 		stu_id_bst.Find(stu_id, stu);

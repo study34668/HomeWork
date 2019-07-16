@@ -14,15 +14,17 @@ double toScore(string s)
 		num = s[i]-48;
 		if( num < 0 || num > 9 ) return -1;
 		score_int = score_int*10 + num;
+		i++;
 	}
 	
 	double score_double = 0.00;
-	i = s.length()-1;
-	while( i >= 0 && s[i] != '.' )
+	int j = s.length()-1;
+	while( j > i && s[j] != '.' )
 	{
-		num = s[i]-48;
+		num = s[j]-48;
 		if( num < 0 || num > 9 ) return -1;
 		score_double = score_double/10.0 + (double)num;
+		j--;
 	}
 	score_double /= 10.0;
 	

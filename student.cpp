@@ -10,7 +10,7 @@ class Student {
 public:
 	int id;
 	string name;
-	BSTree<int, int> score_id_bst;
+	BSTree<double, int> score_id_bst;
 	int total_credit;
 	double weighted_score;
 	int rank;
@@ -31,15 +31,20 @@ public:
 		weighted_score = 0.0;
 	}
 	
+	~Student()
+	{
+		score_id_bst.Destroy();
+	}
+	
 	void setData(int _id, string _name)
 	{
 		id = _id;
 		name = _name;
 	}
 	
-	bool addScore(int sub_id, int score, int credit)
+	bool addScore(int sub_id, double score, int credit)
 	{
-		int tmp;
+		double tmp;
 		if( score_id_bst.Find(sub_id, tmp) ) return false;
 		score_id_bst.Insert(sub_id, score);
 		weighted_score = (weighted_score*total_credit + score*credit) / (total_credit+credit);
@@ -49,23 +54,23 @@ public:
 	
 	bool delScore(int sub_id, int credit)
 	{
-		int score;
+		double score;
 		if( !score_id_bst.Find(sub_id, score) ) return false;
 		score_id_bst.Delete(sub_id);
-		int tmp = weighted_score*total_credit - score*credit;
+		double tmp = weighted_score*total_credit - score*credit;
 		if( tmp > 0 )
 		{
 			weighted_score = tmp / (total_credit-credit);
 		} else {
-			weighted_score = 0;
+			weighted_score = 0.00;
 		}
 		total_credit -= credit;
 		return true;
 	}
 	
-	int getScore(int sub_id)
+	double getScore(int sub_id)
 	{
-		int tmp;
+		double tmp;
 		if( score_id_bst.Find(sub_id, tmp) ) return tmp;
 		else return -1;
 	}
