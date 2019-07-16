@@ -1,6 +1,5 @@
 #include "BSTree.cpp"
 #include "manager.cpp"
-#include "strParser.cpp"
 #include "functions.cpp"
 #include <fstream>
 #include <string>
@@ -32,9 +31,9 @@ public:
 			if( s != "" && s[0] == '{' )
 			{
 				s = s.substr(1);
-				int id = toNumber(StrParser::getWord(s, ','));
-				string name = StrParser::getWord(s, ',');
-				int credit = toNumber(StrParser::getWord(s, '}'));
+				int id = toNumber(getWord(s, ','));
+				string name = getWord(s, ',');
+				int credit = toNumber(getWord(s, '}'));
 				manager.addSubject(id, name, credit);
 			}
 		}
@@ -53,18 +52,18 @@ public:
 			if( s != "" && s[0] == '{' )
 			{
 				s = s.substr(1);
-				int id = toNumber(StrParser::getWord(s, ','));
-				string name = StrParser::getWord(s, ',');
+				int id = toNumber(getWord(s, ','));
+				string name = getWord(s, ',');
 				manager.addStudent(id, name);
 				if( s != "" && s[0] == '[' )
 				{
 					s = s.substr(1);
-					s = StrParser::getWord(s, ']');
+					s = getWord(s, ']');
 					string tmp;
 					while( s != "" )
 					{
-						tmp = StrParser::getWord(s, '|');
-						int sub_id = toNumber(StrParser::getWord(tmp, ','));
+						tmp = getWord(s, '|');
+						int sub_id = toNumber(getWord(tmp, ','));
 						double score = toScore(tmp);
 						manager.addStudentScore(id, sub_id, score);
 					}

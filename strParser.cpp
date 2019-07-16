@@ -1,3 +1,4 @@
+#include "functions.cpp"
 #include <string>
 using namespace std;
 
@@ -16,19 +17,19 @@ public:
 		if( s == "help" ) return 2;
 		if( s == "save" ) return 3;
 		
-		string word = StrParser::getWord(s);
+		string word = getWord(s);
 		
 		if( word == "add" )
 		{
-			return StrParser::parseAdd(s);
+			return parseAdd(s);
 		} else if( word == "search" ) {
-			return StrParser::parseSearch(s);
+			return parseSearch(s);
 		} else if( word == "update" )
 		{
-			return StrParser::parseUpdate(s);
+			return parseUpdate(s);
 		} else if( word == "delete" )
 		{
-			return StrParser::parseDel(s);
+			return parseDel(s);
 		} else {
 			return -1;
 		}
@@ -36,7 +37,7 @@ public:
 	
 	static int parseSearch(string &s)
 	{
-		string word = StrParser::getWord(s);
+		string word = getWord(s);
 		if( word == "student" )
 		{
 			return 11;
@@ -104,27 +105,7 @@ public:
 			return -1;
 		}
 	} 
-	
-	static string getWord(string &s)
-	{
-		return getWord(s, ' ');
-	}
-	
-	static string getWord(string &s, char c)
-	{
-		int i = 0;
-		string word = "";
-		while( i < s.length() && s[i] != c )
-		{
-			word = word+s[i];
-			i++;
-		}
-		i++;
-		if( i < s.length() ) s = s.substr(i);
-		else s = "";
-		
-		return word;
-	}
+
 };
 
 #endif

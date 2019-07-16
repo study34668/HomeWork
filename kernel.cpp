@@ -3,6 +3,7 @@
 #include "strParser.cpp"
 #include "fileSystem.cpp"
 #include "functions.cpp"
+#include "BSTree.cpp"
 #include <string>
 #include <map>
 #include <vector>
@@ -130,7 +131,7 @@ public:
 	
 	void handleSearchStudent(string &s)
 	{
-		string tmp = StrParser::getWord(s);
+		string tmp = getWord(s);
 		if( tmp == "all" )
 		{
 			BSTNode<Student*, int>* root = manager.getStudents()->getRoot();
@@ -156,7 +157,7 @@ public:
 	
 	void handleSearchSubject(string &s)
 	{
-		string tmp = StrParser::getWord(s);
+		string tmp = getWord(s);
 		if( tmp == "all" )
 		{
 			BSTNode<Subject*, int>* root = manager.getSubjects()->getRoot();
@@ -182,8 +183,8 @@ public:
 	
 	void handleSearchStudentScore(string &s)
 	{
-		string tmp1 = StrParser::getWord(s);
-		string tmp2 = StrParser::getWord(s);
+		string tmp1 = getWord(s);
+		string tmp2 = getWord(s);
 		
 		if( tmp1 == "" || tmp2 == "" )
 		{
@@ -275,7 +276,7 @@ public:
 	
 	void handleSearchStuRank(string &s)
 	{
-		string tmp1 = StrParser::getWord(s);
+		string tmp1 = getWord(s);
 		
 		if( tmp1 == "" )
 		{
@@ -336,9 +337,9 @@ public:
 	
 	void handleAddSubject(string &s)
 	{
-		string tmp1 = StrParser::getWord(s);
-		string tmp2 = StrParser::getWord(s);
-		string tmp3 = StrParser::getWord(s);
+		string tmp1 = getWord(s);
+		string tmp2 = getWord(s);
+		string tmp3 = getWord(s);
 		
 		if( tmp1 == "" || tmp2 == "" || tmp3 == "" )
 		{
@@ -349,7 +350,7 @@ public:
 		int id = toNumber(tmp1);
 		string name = tmp2;
 		int credit = 0;
-		string credit_int = StrParser::getWord(tmp3, '.');
+		string credit_int = getWord(tmp3, '.');
 		credit = toNumber(credit_int);
 		if( tmp3 == "" )
 		{
@@ -379,8 +380,8 @@ public:
 	
 	void handleAddStudent(string &s)
 	{
-		string tmp1 = StrParser::getWord(s);
-		string tmp2 = StrParser::getWord(s);
+		string tmp1 = getWord(s);
+		string tmp2 = getWord(s);
 		
 		if( tmp1 == "" || tmp2 == "" )
 		{
@@ -408,9 +409,9 @@ public:
 	
 	void handleAddScore(string &s)
 	{
-		string tmp1 = StrParser::getWord(s);
-		string tmp2 = StrParser::getWord(s);
-		string tmp3 = StrParser::getWord(s);
+		string tmp1 = getWord(s);
+		string tmp2 = getWord(s);
+		string tmp3 = getWord(s);
 		
 		if( tmp1 == "" || tmp2 == "" || tmp3 == "" )
 		{
@@ -467,11 +468,11 @@ public:
 	
 	void handleDelStudent(string &s)
 	{
-		string tmp = StrParser::getWord(s);
+		string tmp = getWord(s);
 		int stu_id = toNumber(tmp);
 		if( stu_id == 0 )
 		{
-			handleGetStuIdByName(tmp1, stu_id);
+			handleGetStuIdByName(tmp, stu_id);
 		}
 		if( stu_id != 0 )
 		{
@@ -488,11 +489,11 @@ public:
 	
 	void handleDelSubject(string &s)
 	{
-		string tmp = StrParser::getWord(s);
+		string tmp = getWord(s);
 		int sub_id = toNumber(tmp);
 		if( sub_id == 0 )
 		{
-			handleGetSubIdByName(tmp2, sub_id);
+			handleGetSubIdByName(tmp, sub_id);
 		}
 		if( sub_id != 0 )
 		{
@@ -509,8 +510,8 @@ public:
 	
 	void handleDelScore(string &s)
 	{
-		string tmp1 = StrParser::getWord(s);
-		string tmp2 = StrParser::getWord(s);
+		string tmp1 = getWord(s);
+		string tmp2 = getWord(s);
 		int stu_id = toNumber(tmp1);
 		int sub_id = toNumber(tmp2);
 		if( stu_id == 0 )

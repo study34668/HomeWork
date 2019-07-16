@@ -90,4 +90,25 @@ string toString(int number) //Êý×Ö±ä³É×Ö·û
 	return result;
 }
 
+string getWord(string &s, char c)
+{
+	int i = 0;
+	string word = "";
+	while( i < s.length() && s[i] != c )
+	{
+		word = word+s[i];
+		i++;
+	}
+	i++;
+	if( i < s.length() ) s = s.substr(i);
+	else s = "";
+	
+	return word;
+}
+
+string getWord(string &s)
+{
+	return getWord(s, ' ');
+}
+
 #endif

@@ -1,5 +1,6 @@
 #include "subject.cpp"
 #include "student.cpp"
+#include "BSTree.cpp"
 #include <string>
 #include <iostream>
 #include <iomanip>
