@@ -124,7 +124,7 @@ public:
 		for(int i=0; i<sub_vector.size(); i++)
 		{
 			Subject* sub = sub_vector[i];
-			cout << "课程号: " << sub->id << " 课程名称: " << sub->name << " 学分: " << (double)sub->credit/2.0 << endl;
+			cout << "课程号: " << sub->id << " 课程名称: " << sub->name << " 学分: " << (double)(sub->credit)/2.0 << endl;
 		}
 	}
 	
@@ -133,7 +133,7 @@ public:
 		if( p == NULL ) return;
 		if( p->lc != NULL ) ergodic_printSub(p->lc);
 		Subject* sub = p->data;
-		cout << "课程号: " << sub->id << " 课程名称: " << sub->name << " 学分: " << (double)sub->credit/2.0 << endl;
+		cout << "课程号: " << sub->id << " 课程名称: " << sub->name << " 学分: " << (double)(sub->credit)/2.0 << endl;
 		if( p->rc != NULL ) ergodic_printSub(p->rc);
 	}
 	

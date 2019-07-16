@@ -312,12 +312,14 @@ public:
 		weight_sco_map.insert( pair<Range_info, Student*>(range_info, stu) );
 		
 		map<Range_info, Student*>::iterator i = weight_sco_map.find(range_info);
-		if( (i+1) != weight_sco_map.end() )
+		i++; 
+		if( i != weight_sco_map.end() )
 		{
-			stu->rank = (i+1)->second->rank+1;
+			stu->rank = i->second->rank+1;
 		} else {
 			stu->rank = 1;
 		}
+		i--;
 		map<Range_info, Student*>::iterator it;
 		for(it=weight_sco_map.begin(); it!=i; it++)
 		{

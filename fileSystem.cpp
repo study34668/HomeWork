@@ -34,14 +34,7 @@ public:
 				s = s.substr(1);
 				int id = toNumber(StrParser::getWord(s, ','));
 				string name = StrParser::getWord(s, ',');
-				string tmp = StrParser::getWord(s, '}');
-				int credit = toNumber(StrParser::getWord(tmp, '.'));
-				if( tmp == "5" )
-				{
-					credit = credit*2+1;
-				} else {
-					credit *= 2;
-				}
+				int credit = toNumber(StrParser::getWord(s, '}'));
 				manager.addSubject(id, name, credit);
 			}
 		}

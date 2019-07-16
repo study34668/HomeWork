@@ -3,6 +3,33 @@ using namespace std;
 #ifndef FUNCTIONS
 #define FUNCTIONS
 
+double toScore(string s)
+{
+	double score;
+	int score_int = 0, num;
+	
+	int i = 0;
+	while( i < s.length() && s[i] != '.' )
+	{
+		num = s[i]-48;
+		if( num < 0 || num > 9 ) return -1;
+		score_int = score_int*10 + num;
+	}
+	
+	double score_double = 0.00;
+	i = s.length()-1;
+	while( i >= 0 && s[i] != '.' )
+	{
+		num = s[i]-48;
+		if( num < 0 || num > 9 ) return -1;
+		score_double = score_double/10.0 + (double)num;
+	}
+	score_double /= 10.0;
+	
+	score = (double)score_int + score_double;
+	return score;
+}
+
 int toNumber(string s) //×Ö·û±ä³ÉÊý×Ö 
 {
 	int number = 0, len = s.length(), k, num;
