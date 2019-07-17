@@ -13,6 +13,7 @@ using namespace std;
 #define ER_MEM_EXCEED 1
 #define ER_NOT_EXIST 2
 #define ER_ALREADY_EXIST 3
+#define ER_DATA_WRONG 4
 
 typedef int status;
 
@@ -110,6 +111,42 @@ public:
 		sub_name_bst.Destroy();
 	}
 	
+	status findSubjectsByName(string &name, vector<Subject*> &v)
+	{
+		v.clear();
+		Subject* sub;
+		if( sub_name_bst.Find(name, sub) )
+		{
+			v.push_back(sub);
+		}
+		for(int i=0; i<same_name_sub_vector.size(); i++)
+		{
+			if( same_name_sub_vector[i]->name == name ) v.push_back(same_name_sub_vector[i]);
+		}
+		if( v.size() == 0 )
+			return ER_NOT_EXIST;
+		else
+			return OK;
+	}
+	
+	status findStudentsByName(string &name, vector<Student*> &v)
+	{
+		v.clear();
+		Student* stu;
+		if( stu_name_bst.Find(name, stu) )
+		{
+			v.push_back(stu);
+		}
+		for(int i=0; i<same_name_stu_vector.size(); i++)
+		{
+			if( same_name_stu_vector[i]->name == name ) v.push_back(same_name_stu_vector[i]);
+		}
+		if( v.size() == 0 )
+			return ER_NOT_EXIST;
+		else
+			return OK;
+	}
+	
 	status addSubject(int id, string name, int credit)
 	{
 		Subject* newSubject;
@@ -161,40 +198,180 @@ public:
 		return OK;
 	}
 	
-	status findSubjectsByName(string &name, vector<Subject*> &v)
+	status updateStudent(int old_stu_id, int new_stu_id, string new_stu_name)
 	{
-		v.clear();
-		Subject* sub;
-		if( sub_name_bst.Find(name, sub) )
+		Student* stu = NULL;
+		stu_id_bst.Find(old_stu_id, stu);
+		if( stu == NULL )
 		{
-			v.push_back(sub);
-		}
-		for(int i=0; i<same_name_sub_vector.size(); i++)
-		{
-			if( same_name_sub_vector[i]->name == name ) v.push_back(same_name_sub_vector[i]);
-		}
-		if( v.size() == 0 )
 			return ER_NOT_EXIST;
-		else
-			return OK;
+		}
+		if( new_stu_id <= 0 )
+		{
+			return ER_DATA_WRONG;
+		}
+		
+		if( stu->id != new_stu_id )
+		{
+			Student* tmp_p = NULL;
+			stu_id_bst.Find(new_stu_id, tmp_p);
+			if( tmp_p != NULL )
+			{
+				return ER_ALREADY_EXIST;
+			}
+			del_weight_sco_map(stu);
+			stu_id_bst.Delete(old_stu_id);
+			stu->id = new_stu_id;
+			stu_id_bst.Insert(new_stu_id, stu);
+			insert_weight_sco_map(stu);
+		}
+		if( stu->name != new_stu_name )
+		{
+			Student* tmp_p = NULL;
+			string old_stu_name = stu->name;
+			stu->name = new_stu_name;
+			stu_name_bst.Find(old_stu_name, tmp_p);
+			if( stu->id == tmp_p->id )
+			{
+				stu_name_bst.Delete(old_stu_name);
+				vector<Student*>::iterator i;
+				for(i=same_name_stu_vector.begin(); i!=same_name_stu_vector.end(); i++)
+				{
+					if( (*i)->name == old_stu_name )
+					{
+						stu_name_bst.Insert(old_stu_name, (*i));
+						same_name_stu_vector.erase(i);
+						break;
+					}
+				}
+			} else {
+				vector<Student*>::iterator i;
+				for(i=same_name_stu_vector.begin(); i!=same_name_stu_vector.end(); i++)
+				{
+					if( (*i)->id == stu->id )
+					{
+						same_name_stu_vector.erase(i);
+						break;
+					}
+				}
+			}
+			stu_name_bst.Find(new_stu_name, tmp_p);
+			if( tmp_p == NULL )
+			{
+				stu_name_bst.Insert(new_stu_name, stu);
+			} else {
+				same_name_stu_vector.push_back(stu);
+			} 
+		}
+		return OK;
 	}
 	
-	status findStudentsByName(string &name, vector<Student*> &v)
+	void ergodic_update_sub(BSTNode<Student*, int>* &p, int &old_sub_id, int &new_sub_id, int &old_credit, int &new_credit)
 	{
-		v.clear();
-		Student* stu;
-		if( stu_name_bst.Find(name, stu) )
+		if( p == NULL ) return;
+		if( p->lc != NULL ) ergodic_update_sub(p->lc, old_sub_id, new_sub_id, old_credit, new_credit);
+		Student* stu = p->data;
+		double score = stu->getScore(old_sub_id);
+		if( score > -0.5 )
 		{
-			v.push_back(stu);
+			stu->delScore(old_sub_id, old_credit);
+			stu->addScore(new_sub_id, score, new_credit);
 		}
-		for(int i=0; i<same_name_stu_vector.size(); i++)
+		if( p->rc != NULL ) ergodic_update_sub(p->rc, old_sub_id, new_sub_id, old_credit, new_credit);
+	}
+	
+	status updateSubject(int old_sub_id, int new_sub_id, string new_sub_name, int new_credit)
+	{
+		Subject* sub = NULL;
+		sub_id_bst.Find(old_sub_id, sub);
+		if( sub == NULL )
 		{
-			if( same_name_stu_vector[i]->name == name ) v.push_back(same_name_stu_vector[i]);
-		}
-		if( v.size() == 0 )
 			return ER_NOT_EXIST;
-		else
-			return OK;
+		}
+		if( new_sub_id <= 0 )
+		{
+			return ER_DATA_WRONG;
+		}
+		
+		if( sub->id != new_sub_id )
+		{
+			Subject* tmp_p = NULL;
+			sub_id_bst.Find(new_sub_id, tmp_p);
+			if( tmp_p != NULL )
+			{
+				return ER_ALREADY_EXIST;
+			}
+			sub_id_bst.Delete(old_sub_id);
+			sub->id = new_sub_id;
+			sub_id_bst.Insert(new_sub_id, sub);
+		}
+		if( sub->id != new_sub_id || sub->credit != new_credit )
+		{
+			int old_credit = sub->credit;
+			sub->credit = new_credit;
+			BSTNode<Student*, int>* root = stu_id_bst.getRoot();
+			ergodic_update_sub(root, old_sub_id, new_sub_id, old_credit, new_credit);
+		}
+		if( sub->name != new_sub_name )
+		{
+			Subject* tmp_p = NULL;
+			string old_sub_name = sub->name;
+			sub->name = new_sub_name;
+			sub_name_bst.Find(old_sub_name, tmp_p);
+			if( sub->id == tmp_p->id )
+			{
+				sub_name_bst.Delete(old_sub_name);
+				vector<Subject*>::iterator i;
+				for(i=same_name_sub_vector.begin(); i!=same_name_sub_vector.end(); i++)
+				{
+					if( (*i)->name == old_sub_name )
+					{
+						sub_name_bst.Insert(old_sub_name, (*i));
+						same_name_sub_vector.erase(i);
+						break;
+					}
+				}
+			} else {
+				vector<Subject*>::iterator i;
+				for(i=same_name_sub_vector.begin(); i!=same_name_sub_vector.end(); i++)
+				{
+					if( (*i)->id == sub->id )
+					{
+						same_name_sub_vector.erase(i);
+						break;
+					}
+				}
+			}
+			sub_name_bst.Find(new_sub_name, tmp_p);
+			if( tmp_p == NULL )
+			{
+				sub_name_bst.Insert(new_sub_name, sub);
+			} else {
+				same_name_sub_vector.push_back(sub);
+			}
+		}
+		return OK;
+	}
+	
+	status updateScore(int stu_id, int sub_id, double new_score)
+	{
+		Student* stu = getStudent(stu_id);
+		Subject* sub = getSubject(sub_id);
+		if( stu == NULL || sub == NULL )
+		{
+			return ER_NOT_EXIST;
+		}
+		
+		double old_score = stu->getScore(sub_id);
+		if( old_score > -0.5 )
+		{
+			int credit = sub->credit;
+			stu->delScore(sub_id, credit);
+			stu->addScore(sub_id, new_score, credit);
+		} else {
+			return ER_NOT_EXIST;
+		}
+		return OK;
 	}
 	
 	status delStudent(int stu_id)

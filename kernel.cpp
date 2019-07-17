@@ -16,6 +16,7 @@ using namespace std;
 #define ER_MEM_EXCEED 1
 #define ER_NOT_EXIST 2
 #define ER_ALREADY_EXIST 3
+#define ER_DATA_WRONG 4
 
 class Kernel {
 private:
@@ -70,6 +71,7 @@ public:
 			case ER_MEM_EXCEED: IoSystem::printError("内存溢出"); break;
 			case ER_NOT_EXIST: IoSystem::printError("不存在"); break;
 			case ER_ALREADY_EXIST: IoSystem::printError("已经存在"); break;
+			case ER_DATA_WRONG: IoSystem::printError("输入数据有误"); break;
 			default: IoSystem::printError("未知错误"); break;
 		}
 	}
@@ -81,6 +83,7 @@ public:
 			case ER_MEM_EXCEED: IoSystem::printError(s+"内存溢出"); break;
 			case ER_NOT_EXIST: IoSystem::printError(s+"不存在"); break;
 			case ER_ALREADY_EXIST: IoSystem::printError(s+"已经存在"); break;
+			case ER_DATA_WRONG: IoSystem::printError(s+"输入数据有误"); break;
 			default: IoSystem::printError(s+"未知错误"); break;
 		}
 	}
@@ -352,6 +355,11 @@ public:
 		int credit = 0;
 		string credit_int = getWord(tmp3, '.');
 		credit = toNumber(credit_int);
+		if( credit <= 0 )
+		{
+			handleWrong("请输入正确学分");
+			return;
+		}
 		if( tmp3 == "" )
 		{
 			credit *= 2;
@@ -392,9 +400,9 @@ public:
 		int id = toNumber(tmp1);
 		string name = tmp2;
 		
-		if( id == 0 )
+		if( id <= 0 )
 		{
-			handleWrong();
+			handleWrong("请输入正确学号");
 			return;
 		}
 		
@@ -453,23 +461,165 @@ public:
 	
 	void handleUpdateStudent(string &s)
 	{
+		string tmp = getWord(s);
+		string tmp1 = getWord(s);
+		string tmp2 = getWord(s);
+		if( tmp == "" || tmp1 == "" || tmp2 == "" )
+		{
+			handleWrong();
+			return;
+		}
 		
+		int old_stu_id = toNumber(tmp);
+		if( old_stu_id < 0 )
+		{
+			handleWrong("请输入正确学号");
+			return;
+		}
+		if( old_stu_id == 0 )
+		{
+			handleGetStuIdByName(tmp, old_stu_id);
+		}
+		if( old_stu_id != 0 )
+		{
+			int new_stu_id = toNumber(tmp1);
+			if( new_stu_id <= 0 )
+			{
+				handleWrong("请输入正确新学号");
+				return;
+			}
+			int code = manager.updateStudent(old_stu_id, new_stu_id, tmp2);
+			if( code != 0 )
+			{
+				handleError(code, "修改学生信息");
+				return;
+			}
+			handleSuccess("修改学生信息");
+		}
+		return;
 	}
 	
 	void handleUpdateSubject(string &s)
 	{
+		string tmp = getWord(s);
+		string tmp1 = getWord(s);
+		string tmp2 = getWord(s);
+		string tmp3 = getWord(s);
+		if( tmp == "" || tmp1 == "" || tmp2 == "" || tmp3 == "" )
+		{
+			handleWrong();
+			return;
+		}
 		
+		int old_sub_id = toNumber(tmp);
+		if( old_sub_id < 0 )
+		{
+			handleWrong("请输入正确课程号");
+			return;
+		}
+		if( old_sub_id == 0 )
+		{
+			handleGetSubIdByName(tmp, old_sub_id);
+		}
+		if( old_sub_id != 0 )
+		{
+			int new_sub_id = toNumber(tmp1);
+			if( new_sub_id <= 0 )
+			{
+				handleWrong("请输入正确新课程号");
+				return;
+			}
+			
+			int new_credit = 0;
+			string credit_int = getWord(tmp3, '.');
+			new_credit = toNumber(credit_int);
+			if( new_credit <= 0 )
+			{
+				handleWrong("请输入正确学分");
+				return;
+			}
+			if( tmp3 == "" )
+			{
+				new_credit *= 2;
+			} else if( tmp3 == "5" )
+			{
+				new_credit = new_credit*2+1;
+			} else {
+				handleWrong("暂不支持 .5 外的小数学分");
+				return;
+			}
+			
+			int code = manager.updateSubject(old_sub_id, new_sub_id, tmp2, new_credit);
+			if( code != 0 )
+			{
+				handleError(code, "修改科目信息");
+				return;
+			}
+			handleSuccess("修改科目信息");
+		}
+		return;
 	}
 	
 	void handleUpdateScore(string &s)
 	{
+		string tmp1 = getWord(s);
+		string tmp2 = getWord(s);
+		string tmp3 = getWord(s);
+		if( tmp1 == "" || tmp2 == "" || tmp3 == "" )
+		{
+			handleWrong();
+			return;
+		}
 		
+		int stu_id = toNumber(tmp1);
+		if( stu_id < 0 )
+		{
+			handleWrong("请输入正确学号");
+			return;
+		}
+		if( stu_id == 0 )
+		{
+			handleGetStuIdByName(tmp1, stu_id);
+		}
+		int sub_id = toNumber(tmp2);
+		if( sub_id < 0 )
+		{
+			handleWrong("请输入正确课程号");
+			return;
+		}
+		if( sub_id == 0 )
+		{
+			handleGetSubIdByName(tmp2, sub_id);
+		}
+		
+		if( stu_id != 0 && sub_id != 0 )
+		{
+			double score = toScore(tmp3);
+			if( score < 0 )
+			{
+				handleWrong("请输入正确分数");
+				return;
+			}
+			int code = manager.updateScore(stu_id, sub_id, score);
+			if( code != 0 )
+			{
+				handleError(code, "修改分数");
+				return;
+			}
+			handleSuccess("修改分数");
+		}
+		return;
 	}
 	
 	void handleDelStudent(string &s)
 	{
 		string tmp = getWord(s);
 		int stu_id = toNumber(tmp);
+		if( stu_id < 0 )
+		{
+			handleWrong("请输入正确学号");
+			return;
+		}
 		if( stu_id == 0 )
 		{
 			handleGetStuIdByName(tmp, stu_id);

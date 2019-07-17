@@ -89,6 +89,7 @@ public:
 		cout << setw(80) << "v" << "查看版本" << endl << endl;
 		cout << setw(80) << "help" << "查看操作语句" << endl << endl;
 		cout << setw(80) << "save" << "保存数据" << endl << endl;
+		
 		cout << setw(15) << "add" << setw(15) << "student" << setw(50) << "[学号] [姓名]" << "添加学生" << endl << endl;
 		cout << setw(15) << "add" << setw(15) << "subject" << setw(50) << "[课程号] [名称] [学分]" << "添加科目" << endl << endl;
 		cout << setw(15) << "add" << setw(15) << "score" << setw(50) << "[学号|学生姓名] [课程号|课程名称] [分数]" << "添加学生分数" << endl << endl;
@@ -98,9 +99,9 @@ public:
 		cout << setw(15) << "search" << setw(15) << "score" << setw(50) << "[学号|学生姓名|all] [课程号|课程名称|all]" << "查看分数" << endl << endl;
 		cout << setw(15) << "search" << setw(15) << "rank" << setw(50) << "[学号|学生姓名|all]" << "查看加权和排名" << endl << endl;
 		
-		cout << setw(15) << "update" << setw(15) << "student" << setw(50) << "[学号|学生姓名] [学号] [姓名]" << "修改学生信息" << endl << endl;
-		cout << setw(15) << "update" << setw(15) << "subject" << setw(50) << "[课程号|课程名称] [课程号] [名称] [学分]" << "修改科目信息" << endl << endl;
-		cout << setw(15) << "update" << setw(15) << "score" << setw(50) << "[学号|学生姓名] [课程号|课程名称] [分数]" << "修改学生分数" << endl << endl;
+		cout << setw(15) << "update" << setw(15) << "student" << setw(50) << "[学号|学生姓名] [新学号] [新姓名]" << "修改学生信息" << endl << endl;
+		cout << setw(15) << "update" << setw(15) << "subject" << setw(50) << "[课程号|课程名称] [新课程号] [新名称] [新学分]" << "修改科目信息" << endl << endl;
+		cout << setw(15) << "update" << setw(15) << "score" << setw(50) << "[学号|学生姓名] [课程号|课程名称] [新分数]" << "修改学生分数" << endl << endl;
 		
 		cout << setw(15) << "delete" << setw(15) << "student" << setw(50) << "[学号|学生姓名]" << "删除学生" << endl << endl;
 		cout << setw(15) << "delete" << setw(15) << "subject" << setw(50) << "[课程号|课程名称]" << "删除科目" << endl << endl;
