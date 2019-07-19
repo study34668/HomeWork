@@ -1,3 +1,5 @@
+// Æ½ºâ¶þ²æÊ÷ 
+
 #include <iostream>
 using namespace std;
 

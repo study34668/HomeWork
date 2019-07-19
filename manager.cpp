@@ -1,3 +1,5 @@
+// manager 负责管理所有学生和科目的数据，数据的增删改查都由 manager 的接口提供 
+
 #include "subject.cpp"
 #include "student.cpp"
 #include "BSTree.cpp"
@@ -68,13 +70,13 @@ public:
 
 class Manager {
 private:
-	BSTree<Student*, int> stu_id_bst;
-	BSTree<Student*, string> stu_name_bst;
-	BSTree<Subject*, int> sub_id_bst;
-	BSTree<Subject*, string> sub_name_bst;
-	vector<Student*> same_name_stu_vector;
-	vector<Subject*> same_name_sub_vector;
-	map<Range_info, Student*> weight_sco_map;
+	BSTree<Student*, int> stu_id_bst;           //以学号查找学生的平衡二叉树 
+	BSTree<Student*, string> stu_name_bst;      //以姓名查找学生的平衡二叉树 
+	BSTree<Subject*, int> sub_id_bst;           //以课程号查找课程的平衡二叉树 
+	BSTree<Subject*, string> sub_name_bst;      //以名称查找课程的平衡二叉树 
+	vector<Student*> same_name_stu_vector;      //同名的学生 
+	vector<Subject*> same_name_sub_vector;      //同名的科目 
+	map<Range_info, Student*> weight_sco_map;   //学生加权成绩，以便排序用 
 	int stu_num, sub_num;
 	
 public:
@@ -111,6 +113,7 @@ public:
 		sub_name_bst.Destroy();
 	}
 	
+	//通过名称查找科目 
 	status findSubjectsByName(string &name, vector<Subject*> &v)
 	{
 		v.clear();
@@ -129,6 +132,7 @@ public:
 			return OK;
 	}
 	
+	//通过姓名查找学生 
 	status findStudentsByName(string &name, vector<Student*> &v)
 	{
 		v.clear();
@@ -147,6 +151,7 @@ public:
 			return OK;
 	}
 	
+	//添加科目 
 	status addSubject(int id, string name, int credit)
 	{
 		Subject* newSubject;
@@ -163,6 +168,7 @@ public:
 		return OK;
 	}
 	
+	//添加学生 
 	status addStudent(int id, string name)
 	{
 		Student* newStudent;
@@ -181,6 +187,7 @@ public:
 		return OK;
 	}
 	
+	//添加单个学生一门课的分数 
 	status addStudentScore(int stu_id, int sub_id, double score)
 	{
 		Student* stu = NULL;
@@ -198,6 +205,7 @@ public:
 		return OK;
 	}
 	
+	//修改学生信息，需要指定学号 
 	status updateStudent(int old_stu_id, int new_stu_id, string new_stu_name)
 	{
 		Student* stu = NULL;
@@ -211,7 +219,7 @@ public:
 			return ER_DATA_WRONG;
 		}
 		
-		if( stu->id != new_stu_id )
+		if( stu->id != new_stu_id ) //如果修改了学号，需要更新一些索引和关联 
 		{
 			Student* tmp_p = NULL;
 			stu_id_bst.Find(new_stu_id, tmp_p);
@@ -225,13 +233,13 @@ public:
 			stu_id_bst.Insert(new_stu_id, stu);
 			insert_weight_sco_map(stu);
 		}
-		if( stu->name != new_stu_name )
+		if( stu->name != new_stu_name ) //如果修改了姓名，需要更新一些索引和关联
 		{
 			Student* tmp_p = NULL;
 			string old_stu_name = stu->name;
 			stu->name = new_stu_name;
 			stu_name_bst.Find(old_stu_name, tmp_p);
-			if( stu->id == tmp_p->id )
+			if( stu->id == tmp_p->id ) //如果该学生在姓名二叉树里，那么删除后，将重名里的第一个同名的移动到姓名二叉树 
 			{
 				stu_name_bst.Delete(old_stu_name);
 				vector<Student*>::iterator i;
@@ -244,7 +252,7 @@ public:
 						break;
 					}
 				}
-			} else {
+			} else {                   //如果不在，直接删除重名vector里的记录 
 				vector<Student*>::iterator i;
 				for(i=same_name_stu_vector.begin(); i!=same_name_stu_vector.end(); i++)
 				{
@@ -254,7 +262,7 @@ public:
 						break;
 					}
 				}
-			}
+			} //添加新名字的索引和关联 
 			stu_name_bst.Find(new_stu_name, tmp_p);
 			if( tmp_p == NULL )
 			{
@@ -266,6 +274,7 @@ public:
 		return OK;
 	}
 	
+	//是下面修改科目信息的帮助函数，如果修改了课程号和学分，那么需要修改，学生分数的关联 
 	void ergodic_update_sub(BSTNode<Student*, int>* &p, int &old_sub_id, int &new_sub_id, int &old_credit, int &new_credit)
 	{
 		if( p == NULL ) return;
@@ -280,6 +289,7 @@ public:
 		if( p->rc != NULL ) ergodic_update_sub(p->rc, old_sub_id, new_sub_id, old_credit, new_credit);
 	}
 	
+	//修改科目信息 
 	status updateSubject(int old_sub_id, int new_sub_id, string new_sub_name, int new_credit)
 	{
 		Subject* sub = NULL;
@@ -293,7 +303,7 @@ public:
 			return ER_DATA_WRONG;
 		}
 		
-		if( sub->id != new_sub_id )
+		if( sub->id != new_sub_id )//如果修改了课程号，需要更新一些索引和关联 
 		{
 			Subject* tmp_p = NULL;
 			sub_id_bst.Find(new_sub_id, tmp_p);
@@ -305,20 +315,20 @@ public:
 			sub->id = new_sub_id;
 			sub_id_bst.Insert(new_sub_id, sub);
 		}
-		if( sub->id != new_sub_id || sub->credit != new_credit )
+		if( sub->id != new_sub_id || sub->credit != new_credit )//如果修改了课程号和学分，那么需要修改，学生分数的关联 
 		{
 			int old_credit = sub->credit;
 			sub->credit = new_credit;
 			BSTNode<Student*, int>* root = stu_id_bst.getRoot();
 			ergodic_update_sub(root, old_sub_id, new_sub_id, old_credit, new_credit);
 		}
-		if( sub->name != new_sub_name )
+		if( sub->name != new_sub_name )//如果修改了名称，需要更新一些索引和关联
 		{
 			Subject* tmp_p = NULL;
 			string old_sub_name = sub->name;
 			sub->name = new_sub_name;
 			sub_name_bst.Find(old_sub_name, tmp_p);
-			if( sub->id == tmp_p->id )
+			if( sub->id == tmp_p->id )//如果在名称二叉树里，那么删除后，将重名里的第一个同名的移动到名称二叉树 
 			{
 				sub_name_bst.Delete(old_sub_name);
 				vector<Subject*>::iterator i;
@@ -331,7 +341,7 @@ public:
 						break;
 					}
 				}
-			} else {
+			} else {                 //如果不在，直接删除重名vector里的记录 
 				vector<Subject*>::iterator i;
 				for(i=same_name_sub_vector.begin(); i!=same_name_sub_vector.end(); i++)
 				{
@@ -342,7 +352,7 @@ public:
 					}
 				}
 			}
-			sub_name_bst.Find(new_sub_name, tmp_p);
+			sub_name_bst.Find(new_sub_name, tmp_p); //添加新名字的索引和关联 
 			if( tmp_p == NULL )
 			{
 				sub_name_bst.Insert(new_sub_name, sub);
@@ -353,6 +363,7 @@ public:
 		return OK;
 	}
 	
+	//修改学生单科分数 
 	status updateScore(int stu_id, int sub_id, double new_score)
 	{
 		Student* stu = getStudent(stu_id);
@@ -374,6 +385,7 @@ public:
 		return OK;
 	}
 	
+	//删除学生 
 	status delStudent(int stu_id)
 	{
 		Student* stu = NULL;
@@ -402,6 +414,7 @@ public:
 		return OK;
 	}
 	
+	//删除学生单科分数 
 	status delScore(int stu_id, int sub_id)
 	{
 		Student* stu = NULL;
@@ -423,6 +436,7 @@ public:
 		return ER_NOT_EXIST;
 	}
 	
+	//删除科目 
 	status delSubject(int sub_id)
 	{
 		Subject* sub = NULL;
@@ -454,6 +468,7 @@ public:
 		return OK;
 	}
 	
+	//删除了科目后，需要对应的删除所有学生该科的成绩 
 	void ergodic_del_score(BSTNode<Student*, int>* &p, int &sub_id, int &credit)
 	{
 		if( p == NULL ) return;

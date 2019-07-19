@@ -1,3 +1,5 @@
+// 负责打印各种结果 
+
 #include "subject.cpp"
 #include "student.cpp"
 #include "BSTree.cpp"
@@ -32,6 +34,7 @@ public:
 		cout << s << endl << endl;
 	}
 	
+	//打印版本信息和一个 SSS 
 	static void printV()
 	{
 		cout << "Student Score System v1.0.0" << endl << endl;
@@ -81,6 +84,7 @@ public:
 		cout << endl;
 	}
 	
+	//打印帮助信息 
 	static void printHelp()
 	{
 		cout << setiosflags(ios::left);
@@ -109,6 +113,7 @@ public:
 		cout << endl; 
 	}
 	
+	//打印学生信息 
 	static void printStudent(vector<Student*> &stu_vector)
 	{
 		for(int i=0; i<stu_vector.size(); i++)
@@ -118,6 +123,7 @@ public:
 		}
 	}
 	
+	//遍历打印全部学生 
 	static void ergodic_printStu(BSTNode<Student*, int>* &p)
 	{
 		if( p == NULL ) return;
@@ -127,6 +133,7 @@ public:
 		if( p->rc != NULL ) ergodic_printStu(p->rc);
 	}
 	
+	//打印科目信息 
 	static void printSubject(vector<Subject*> &sub_vector)
 	{
 		for(int i=0; i<sub_vector.size(); i++)
@@ -136,6 +143,7 @@ public:
 		}
 	}
 	
+	//遍历打印所有课程 
 	static void ergodic_printSub(BSTNode<Subject*, int>* &p)
 	{
 		if( p == NULL ) return;
@@ -145,6 +153,7 @@ public:
 		if( p->rc != NULL ) ergodic_printSub(p->rc);
 	}
 	
+	//打印分数 
 	static void printScore(vector<Student*> &stu_vector, BSTree<Subject*, int>* &subs)
 	{
 		for(int i=0; i<stu_vector.size(); i++)
@@ -157,6 +166,7 @@ public:
 		}
 	}
 	
+	//打印一科的所有学生分数 
 	static void printSubjectScore(vector<Subject*> &sub_vector, BSTree<Student*, int>* &stus)
 	{
 		for(int i=0; i<sub_vector.size(); i++)
@@ -169,6 +179,7 @@ public:
 		}
 	}
 	
+	//打印一个学生一科的分数 
 	static void printOneScore(vector<Student*> &stu_vector, vector<Subject*> &sub_vector)
 	{
 		for(int i=0; i<stu_vector.size(); i++)
@@ -186,6 +197,7 @@ public:
 		}
 	}
 	
+	//打印加权分数 
 	static void printWeightedScore(map<Range_info, Student*>* &m)
 	{
 		cout << setiosflags(ios::left);
@@ -201,6 +213,7 @@ public:
 		cout << endl;
 	}
 	
+	//打印一个学生加权 
 	static void printOneWeightedScore(vector<Student*> &stu_vector)
 	{
 		for(int i=0; i<stu_vector.size(); i++)
@@ -211,6 +224,8 @@ public:
 	}
 	
 private:
+	//一些帮助函数 
+	
 	static void printStuScoreTitle(Student* &stu)
 	{
 		cout << setiosflags(ios::left);

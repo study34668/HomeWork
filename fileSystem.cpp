@@ -1,3 +1,5 @@
+// 文件系统，主要负责学生和科目信息的保存和加载 
+
 #include "BSTree.cpp"
 #include "manager.cpp"
 #include "functions.cpp"
@@ -20,6 +22,7 @@ public:
 	static fstream sub_file;
 	static fstream stu_file;
 	
+	//加载科目信息 
 	static status loadSubjects(Manager &manager)
 	{
 		string s;
@@ -41,6 +44,7 @@ public:
 		return OK;
 	}
 	
+	//加载学生信息 
 	static status loadStudents(Manager &manager)
 	{
 		string s;
@@ -74,6 +78,7 @@ public:
 		return OK;
 	}
 	
+	//保存科目信息 
 	static status saveSubjects(BSTree<Subject*, int>* &subs)
 	{
 		if( sub_file.is_open() ) sub_file.close();
@@ -88,6 +93,7 @@ public:
 		sub_file << "{" << sub->id << "," << sub->name << "," << sub->credit << "}" << endl;
 	}
 	
+	//保存学生信息 
 	static status saveStudents(BSTree<Student*, int>* &stus)
 	{
 		if( stu_file.is_open() ) stu_file.close();

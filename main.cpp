@@ -1,3 +1,5 @@
+// 入口文件 
+
 #include "kernel.cpp"
 #include <string>
 using namespace std;

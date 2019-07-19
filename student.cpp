@@ -1,3 +1,5 @@
+// 学生类，管理学生信息 
+
 #include "subject.cpp"
 #include "BSTree.cpp"
 #include <string>

@@ -1,3 +1,5 @@
+// 整个系统的核心，负责收到 StrParser 返回的指令后进行处理，并分发给 manager，最后由 IoSystem 打印结果  
+
 #include "manager.cpp"
 #include "ioSystem.cpp"
 #include "strParser.cpp"
@@ -23,12 +25,14 @@ private:
 	Manager manager;
 	
 public:
+	// 启动整个程序，需要加载之前保存的学生和科目信息 
 	Kernel()
 	{
 		FileSystem::loadSubjects(manager);
 		FileSystem::loadStudents(manager);
 	}
 	
+	// 将请求分发给各个函数 
 	void handle(string s)
 	{
 		int code = StrParser::parse(s);
@@ -98,16 +102,19 @@ public:
 		IoSystem::printWrong(s);
 	}
 	
+	// 打印版本信息 
 	void handleV()
 	{
 		IoSystem::printV();
 	}
 	
+	// 打印帮助信息 
 	void handleHelp()
 	{
 		IoSystem::printHelp();
 	}
 	
+	// 保存现在的学生和科目信息 
 	void handleSave()
 	{
 		BSTree<Subject*, int>* subs = manager.getSubjects();
@@ -118,6 +125,7 @@ public:
 		return;
 	}
 	
+	// 通过学号字符串获取学生 
 	Student* getStu(string &s)
 	{
 		int stu_id = toNumber(s);
@@ -125,6 +133,7 @@ public:
 		return manager.getStudent(stu_id);
 	}
 	
+	// 通过课程号字符串获取科目 
 	Subject* getSub(string &s)
 	{
 		int sub_id = toNumber(s);
@@ -132,6 +141,7 @@ public:
 		return manager.getSubject(sub_id);
 	}
 	
+	// 查找学生信息 
 	void handleSearchStudent(string &s)
 	{
 		string tmp = getWord(s);
@@ -158,6 +168,7 @@ public:
 		return;
 	}
 	
+	// 查找科目信息 
 	void handleSearchSubject(string &s)
 	{
 		string tmp = getWord(s);
@@ -184,6 +195,7 @@ public:
 		return;
 	}
 	
+	// 查找分数 
 	void handleSearchStudentScore(string &s)
 	{
 		string tmp1 = getWord(s);
@@ -197,13 +209,13 @@ public:
 		
 		if( tmp1 == "all" )
 		{
-			if( tmp2 == "all" )
+			if( tmp2 == "all" ) // 全部学生全部科目分数 
 			{
 				BSTree<Subject*, int>* subs = manager.getSubjects();
 				BSTNode<Student*, int>* root = manager.getStudents()->getRoot();
 				ergodic_handle_searchAll(root, subs);
 				return;
-			} else {
+			} else {            // 全部学生单科分数 
 				vector<Subject*> sub_vector;
 				sub_vector.clear();
 				Subject* sub = getSub(tmp2);
@@ -239,12 +251,12 @@ public:
 			stu_vector.push_back(stu);
 		}
 		
-		if( tmp2 == "all" )
+		if( tmp2 == "all" ) //单个学生全科分数 
 		{
 			BSTree<Subject*, int>* subs = manager.getSubjects();
 			IoSystem::printScore(stu_vector, subs);
 			return;
-		} else {
+		} else {            //单个学生单科分数 
 			vector<Subject*> sub_vector;
 			sub_vector.clear();
 			Subject* sub = getSub(tmp2);
@@ -262,9 +274,9 @@ public:
 			IoSystem::printOneScore(stu_vector, sub_vector);
 			return;
 		}
-		
 	}
 	
+	// 遍历学生二叉树，打印全部学生全科分数 
 	void ergodic_handle_searchAll(BSTNode<Student*, int>* &p, BSTree<Subject*, int>* &subs)
 	{
 		if( p == NULL ) return;
@@ -277,6 +289,7 @@ public:
 		if( p->rc != NULL ) ergodic_handle_searchAll(p->rc, subs);
 	}
 	
+	//查找学生加权和排名 
 	void handleSearchStuRank(string &s)
 	{
 		string tmp1 = getWord(s);
@@ -311,6 +324,7 @@ public:
 		return;
 	}
 	
+	//查找所有学生排名 
 	void handleSearchAllRank()
 	{
 		map<Range_info, Student*>* weight_sco_map = manager.getWeightScoMap();
@@ -338,6 +352,7 @@ public:
 //		if( p->rc != NULL ) ergodic_map_push(p->rc, m);
 //	}
 	
+	//增加一个科目 
 	void handleAddSubject(string &s)
 	{
 		string tmp1 = getWord(s);
@@ -386,6 +401,7 @@ public:
 		}
 	}
 	
+	//增加一个学生 
 	void handleAddStudent(string &s)
 	{
 		string tmp1 = getWord(s);
@@ -415,6 +431,7 @@ public:
 		}
 	}
 	
+	//增加某个学生某科的分数 
 	void handleAddScore(string &s)
 	{
 		string tmp1 = getWord(s);
@@ -459,6 +476,7 @@ public:
 		return;
 	}
 	
+	//修改学生信息 
 	void handleUpdateStudent(string &s)
 	{
 		string tmp = getWord(s);
@@ -499,6 +517,7 @@ public:
 		return;
 	}
 	
+	//修改科目信息 
 	void handleUpdateSubject(string &s)
 	{
 		string tmp = getWord(s);
@@ -560,6 +579,7 @@ public:
 		return;
 	}
 	
+	//修改某个学生某科的分数 
 	void handleUpdateScore(string &s)
 	{
 		string tmp1 = getWord(s);
@@ -611,6 +631,7 @@ public:
 		return;
 	}
 	
+	//删除一名学生 
 	void handleDelStudent(string &s)
 	{
 		string tmp = getWord(s);
@@ -637,6 +658,7 @@ public:
 		return;
 	}
 	
+	//删除一个科目 
 	void handleDelSubject(string &s)
 	{
 		string tmp = getWord(s);
@@ -658,6 +680,7 @@ public:
 		return;
 	}
 	
+	//删除一名学生一门课的分数 
 	void handleDelScore(string &s)
 	{
 		string tmp1 = getWord(s);

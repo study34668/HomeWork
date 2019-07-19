@@ -1,3 +1,5 @@
+// 负责将用户的输入转换为友好的编码 
+
 #include "functions.cpp"
 #include <string>
 using namespace std;

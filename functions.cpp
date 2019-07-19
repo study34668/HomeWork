@@ -1,9 +1,11 @@
+// 各种常用的函数 
+
 using namespace std;
 
 #ifndef FUNCTIONS
 #define FUNCTIONS
 
-double toScore(string s)
+double toScore(string s) //字符转成分数 
 {
 	double score;
 	int score_int = 0, num;
@@ -90,7 +92,7 @@ string toString(int number) //数字变成字符
 	return result;
 }
 
-string getWord(string &s, char c)
+string getWord(string &s, char c) //得到给出的分割符前的一串字符 
 {
 	int i = 0;
 	string word = "";

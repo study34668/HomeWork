@@ -1,3 +1,5 @@
+// 科目类，管理科目信息 
+
 #include <string>
 using namespace std;
 
