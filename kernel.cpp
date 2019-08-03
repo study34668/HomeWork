@@ -19,6 +19,7 @@ using namespace std;
 #define ER_NOT_EXIST 2
 #define ER_ALREADY_EXIST 3
 #define ER_DATA_WRONG 4
+#define ER_UNKNOWN -1
 
 class Kernel {
 private:
@@ -43,6 +44,9 @@ public:
 			case 1: handleV(); break;
 			case 2: handleHelp(); break;
 			case 3: handleSave(); break;
+			case 4: handleNew(); break;
+			case 5: handleSaveAs(s); break;
+			case 6: handleCheckout(s); break;
 			
 			case 11: handleSearchStudent(s); break;
 			case 12: handleSearchSubject(s); break;
@@ -122,6 +126,51 @@ public:
 		BSTree<Student*, int>* stus = manager.getStudents();
 		FileSystem::saveStudents(stus);
 		IoSystem::printSuccess("保存");
+		return;
+	}
+	
+	void handleNew()
+	{
+		FileSystem::newData();
+		manager.clear();
+		handleSuccess("新建");
+		return;
+	}
+	
+	void handleSaveAs(string s)
+	{
+		string name = getWord(s);
+		if( name != "" )
+		{
+			int code = FileSystem::saveAs(name, manager.getSubjects(), manager.getStudents());
+			if( code == 0 )
+			{
+				handleSuccess("另存为");
+				return;
+			} else {
+				handleError(code, "另存为");
+				return;
+			}
+		} else {
+			handleWrong("请输入正确名称");
+			return;
+		}
+	}
+	
+	void handleCheckout(string s)
+	{
+		string name = getWord(s);
+		if( !FileSystem::exist(name) )
+		{
+			handleWrong("不存在");
+			return; 
+		}
+		
+		manager.clear();
+		FileSystem::loadSubjects(manager, name);
+		FileSystem::loadStudents(manager, name);
+		
+		handleSuccess("加载");
 		return;
 	}
 	

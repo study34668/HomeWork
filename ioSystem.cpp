@@ -92,7 +92,10 @@ public:
 		cout << "带[]的代表是可以修改的参数，|代表或者" << endl << endl;
 		cout << setw(80) << "v" << "查看版本" << endl << endl;
 		cout << setw(80) << "help" << "查看操作语句" << endl << endl;
-		cout << setw(80) << "save" << "保存数据" << endl << endl;
+		cout << setw(80) << "save" << "暂时保存数据" << endl << endl;
+		cout << setw(80) << "new" << "新建数据" << endl << endl;
+		cout << setw(15) << "save" << setw(65) << "[数据名称]" << "保存为" << endl << endl;
+		cout << setw(15) << "checkout" << setw(65) << "[数据名称]" << "查看数据" << endl << endl;
 		
 		cout << setw(15) << "add" << setw(15) << "student" << setw(50) << "[学号] [姓名]" << "添加学生" << endl << endl;
 		cout << setw(15) << "add" << setw(15) << "subject" << setw(50) << "[课程号] [名称] [学分]" << "添加科目" << endl << endl;
@@ -139,7 +142,7 @@ public:
 		for(int i=0; i<sub_vector.size(); i++)
 		{
 			Subject* sub = sub_vector[i];
-			cout << "课程号: " << sub->id << " 课程名称: " << sub->name << " 学分: " << (double)(sub->credit)/2.0 << endl;
+			cout << "课程号: " << sub->id << " 课程名称: " << sub->name << " 学分: " << (double)(sub->credit)/2.0 << " 平均分: " << sub->average << endl;
 		}
 	}
 	
@@ -149,7 +152,7 @@ public:
 		if( p == NULL ) return;
 		if( p->lc != NULL ) ergodic_printSub(p->lc);
 		Subject* sub = p->data;
-		cout << "课程号: " << sub->id << " 课程名称: " << sub->name << " 学分: " << (double)(sub->credit)/2.0 << endl;
+		cout << "课程号: " << sub->id << " 课程名称: " << sub->name << " 学分: " << (double)(sub->credit)/2.0 << " 平均分: " << sub->average << endl;
 		if( p->rc != NULL ) ergodic_printSub(p->rc);
 	}
 	

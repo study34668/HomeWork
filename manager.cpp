@@ -113,6 +113,26 @@ public:
 		sub_name_bst.Destroy();
 	}
 	
+	void clear()
+	{
+		sub_id_bst.ergodic(Manager::sub_id_delete);
+		stu_id_bst.ergodic(Manager::stu_id_delete);
+		
+		stu_id_bst.Destroy();
+		sub_id_bst.Destroy();
+		stu_name_bst.Destroy();
+		sub_name_bst.Destroy();
+		
+		stu_num = 0; sub_num = 0;
+		stu_id_bst.init();
+		sub_id_bst.init();
+		stu_name_bst.init();
+		sub_name_bst.init();
+		same_name_stu_vector.clear();
+		same_name_sub_vector.clear();
+		weight_sco_map.clear();
+	}
+	
 	//通过名称查找科目 
 	status findSubjectsByName(string &name, vector<Subject*> &v)
 	{
@@ -193,15 +213,20 @@ public:
 		Student* stu = NULL;
 		stu_id_bst.Find(stu_id, stu);
 		if( stu == NULL ) return ER_NOT_EXIST;
-		Subject* sub = NULL;
+		Subject* sub = NULL; 
 		sub_id_bst.Find(sub_id, sub);
 		if( sub == NULL ) return ER_NOT_EXIST;
 		
 		del_weight_sco_map(stu);
-		
-		stu->addScore(sub_id, score, sub->credit);
-		
+		if( !stu->addScore(sub_id, score, sub->credit) )
+		{
+			insert_weight_sco_map(stu);
+			return ER_ALREADY_EXIST;
+		}
 		insert_weight_sco_map(stu);
+		
+		sub->addScore(score);
+		
 		return OK;
 	}
 	
@@ -377,8 +402,13 @@ public:
 		if( old_score > -0.5 )
 		{
 			int credit = sub->credit;
+			del_weight_sco_map(stu);
 			stu->delScore(sub_id, credit);
 			stu->addScore(sub_id, new_score, credit);
+			insert_weight_sco_map(stu);
+			
+			sub->delScore(old_score);
+			sub->addScore(new_score);
 		} else {
 			return ER_NOT_EXIST;
 		}
@@ -407,11 +437,28 @@ public:
 			stu_name_bst.Delete(name);
 		}
 		
-		del_weight_sco_map(stu);
+		BSTNode<double, int>* root = stu->score_id_bst.getRoot();
+		ergodic_del_sub_sco(root);
 		
+		del_weight_sco_map(stu);
 		delete stu;
 		stu_id_bst.Delete(stu_id);
+		
 		return OK;
+	}
+	
+	//删除学生每门课成绩 
+	void ergodic_del_sub_sco(BSTNode<double, int>* p)
+	{
+		if( p == NULL ) return;
+		if( p->lc != NULL ) ergodic_del_sub_sco(p->lc);
+		Subject* sub = NULL;
+		sub_id_bst.Find(p->key, sub);
+		if( sub != NULL )
+		{
+			sub->delScore(p->data);
+		}
+		if( p->rc != NULL ) ergodic_del_sub_sco(p->rc);
 	}
 	
 	//删除学生单科分数 
@@ -423,13 +470,15 @@ public:
 		if( !sub_id_bst.Find(sub_id, sub) ) return ER_NOT_EXIST;
 		if( stu != NULL && sub != NULL )
 		{
-			del_weight_sco_map(stu);
-			if( stu->delScore(sub_id, sub->credit) )
+			double score = stu->getScore(sub_id);
+			if( score > -0.5 )
 			{
+				del_weight_sco_map(stu);
+				stu->delScore(sub_id, sub->credit);
 				insert_weight_sco_map(stu);
+				sub->delScore(score);
 				return OK;
 			} else {
-				insert_weight_sco_map(stu);
 				return ER_NOT_EXIST;
 			}
 		}

@@ -18,8 +18,12 @@ public:
 		if( s == "v" || s == "V" ) return 1;
 		if( s == "help" ) return 2;
 		if( s == "save" ) return 3;
+		if( s == "new" ) return 4;
 		
 		string word = getWord(s);
+		
+		if( word == "save" ) return 5;
+		if( word == "checkout" ) return 6;
 		
 		if( word == "add" )
 		{
