@@ -122,7 +122,7 @@ public:
 		for(int i=0; i<stu_vector.size(); i++)
 		{
 			Student* stu = stu_vector[i];
-			cout << "学号: " << stu->id << " 姓名: " << stu->name << endl;
+			cout << "学号: " << stu->id << " 姓名: " << stu->name << " 加权: " << stu->weighted_score << " 排名: " << stu->rank << endl;
 		}
 	}
 	
@@ -132,7 +132,7 @@ public:
 		if( p == NULL ) return;
 		if( p->lc != NULL ) ergodic_printStu(p->lc);
 		Student* stu = p->data;
-		cout << "学号: " << stu->id << " 姓名: " << stu->name << endl;
+		cout << "学号: " << stu->id << " 姓名: " << stu->name << " 加权: " << stu->weighted_score << " 排名: " << stu->rank << endl;
 		if( p->rc != NULL ) ergodic_printStu(p->rc);
 	}
 	
